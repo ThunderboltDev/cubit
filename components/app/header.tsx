@@ -13,32 +13,22 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { colors } from "@/constants/colors";
+import { puzzles } from "@/constants/puzzles";
 import { useColorScheme } from "@/hooks/use-color-scheme";
-
-const PUZZLES = [
-  "2x2",
-  "3x3",
-  "4x4",
-  "5x5",
-  "6x6",
-  "7x7",
-  "Pyraminx",
-  "Megaminx",
-  "Skewb",
-  "Square-1",
-  "Clock",
-];
-
-const SESSIONS = ["Default", "Blindfolded", "One-Handed", "Multi-Blind"];
+import { useSessions } from "@/hooks/use-sessions";
+import { useGlobalSettings } from "@/hooks/use-settings";
 
 export function Header() {
   const router = useRouter();
   const colorScheme = useColorScheme();
+
   const [puzzleModalVisible, setPuzzleModalVisible] = useState(false);
   const [sessionModalVisible, setSessionModalVisible] = useState(false);
-  const [selectedPuzzle, setSelectedPuzzle] = useState("3x3");
-  const [selectedSession, setSelectedSession] = useState("Default");
+
+  const { settings, updateSettings } = useGlobalSettings();
+  const { sessions, selectedSession, switchSession } = useSessions();
 
   const handleSettings = () => {
     router.push("/settings");
@@ -46,51 +36,54 @@ export function Header() {
 
   return (
     <>
-      <View
+      <SafeAreaView
+        edges={["top"]}
         style={[
-          styles.header,
+          styles.safeArea,
           { backgroundColor: colors[colorScheme].background },
         ]}
       >
-        <TouchableOpacity
-          onPress={() => setSessionModalVisible(true)}
-          style={styles.sideButton}
-          activeOpacity={0.7}
-        >
-          <HugeiconsIcon
-            icon={Layers01Icon}
-            size={22}
-            color={colors[colorScheme].foreground}
-          />
-        </TouchableOpacity>
+        <View style={styles.header}>
+          <TouchableOpacity
+            onPress={() => setSessionModalVisible(true)}
+            style={styles.sideButton}
+            activeOpacity={0.7}
+          >
+            <HugeiconsIcon
+              icon={Layers01Icon}
+              size={22}
+              color={colors[colorScheme].foreground}
+            />
+          </TouchableOpacity>
 
-        <TouchableOpacity
-          onPress={() => setPuzzleModalVisible(true)}
-          style={[
-            styles.puzzleButton,
-            { backgroundColor: colors[colorScheme].secondary },
-          ]}
-          activeOpacity={0.7}
-        >
-          <HugeiconsIcon
-            icon={CubeIcon}
-            size={20}
-            color={colors[colorScheme].accent}
-          />
-        </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => setPuzzleModalVisible(true)}
+            style={[
+              styles.puzzleButton,
+              { backgroundColor: colors[colorScheme].secondary },
+            ]}
+            activeOpacity={0.7}
+          >
+            <HugeiconsIcon
+              icon={CubeIcon}
+              size={20}
+              color={colors[colorScheme].accent}
+            />
+          </TouchableOpacity>
 
-        <TouchableOpacity
-          onPress={handleSettings}
-          style={styles.sideButton}
-          activeOpacity={0.7}
-        >
-          <HugeiconsIcon
-            icon={Settings02Icon}
-            size={22}
-            color={colors[colorScheme].foreground}
-          />
-        </TouchableOpacity>
-      </View>
+          <TouchableOpacity
+            onPress={handleSettings}
+            style={styles.sideButton}
+            activeOpacity={0.7}
+          >
+            <HugeiconsIcon
+              icon={Settings02Icon}
+              size={22}
+              color={colors[colorScheme].foreground}
+            />
+          </TouchableOpacity>
+        </View>
+      </SafeAreaView>
 
       <Modal
         animationType="fade"
@@ -111,17 +104,17 @@ export function Header() {
               },
             ]}
           >
-            {PUZZLES.map((puzzle) => (
+            {puzzles.map((puzzle) => (
               <TouchableOpacity
                 key={puzzle}
                 style={[
                   styles.dropdownItem,
-                  selectedPuzzle === puzzle && {
+                  settings?.selectedPuzzle === puzzle && {
                     backgroundColor: `${colors[colorScheme].accent}20`,
                   },
                 ]}
                 onPress={() => {
-                  setSelectedPuzzle(puzzle);
+                  updateSettings({ selectedPuzzle: puzzle });
                   setPuzzleModalVisible(false);
                 }}
               >
@@ -129,7 +122,7 @@ export function Header() {
                   icon={CubeIcon}
                   size={16}
                   color={
-                    selectedPuzzle === puzzle ?
+                    settings?.selectedPuzzle === puzzle ?
                       colors[colorScheme].accent
                     : colors[colorScheme].foreground
                   }
@@ -159,17 +152,17 @@ export function Header() {
               },
             ]}
           >
-            {SESSIONS.map((session) => (
+            {sessions.map((session) => (
               <TouchableOpacity
-                key={session}
+                key={session.id}
                 style={[
                   styles.dropdownItem,
-                  selectedSession === session && {
+                  selectedSession?.id === session.id && {
                     backgroundColor: `${colors[colorScheme].accent}20`,
                   },
                 ]}
                 onPress={() => {
-                  setSelectedSession(session);
+                  switchSession(session);
                   setSessionModalVisible(false);
                 }}
               >
@@ -177,7 +170,7 @@ export function Header() {
                   icon={Layers01Icon}
                   size={16}
                   color={
-                    selectedSession === session ?
+                    selectedSession?.id === session.id ?
                       colors[colorScheme].accent
                     : colors[colorScheme].foreground
                   }
@@ -192,14 +185,16 @@ export function Header() {
 }
 
 const styles = StyleSheet.create({
+  safeArea: {
+    width: "100%",
+  },
   header: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
     paddingHorizontal: 16,
-    paddingTop: 60,
-    paddingBottom: 12,
-    height: 60,
+    paddingVertical: 12,
+    height: 56,
   },
   sideButton: {
     width: 44,

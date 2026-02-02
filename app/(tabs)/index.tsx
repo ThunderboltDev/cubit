@@ -1,5 +1,5 @@
 import { StyleSheet } from "react-native";
-import { Text, View } from "@/components/app/themed";
+import { Text, View } from "@/components/ui/themed";
 
 export default function Home() {
   return (

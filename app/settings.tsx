@@ -1,10 +1,10 @@
 import { StyleSheet } from "react-native";
 import { Text, View } from "@/components/ui/themed";
 
-export default function Statistics() {
+export default function Settings() {
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Statistics</Text>
+      <Text style={styles.title}>Settings</Text>
     </View>
   );
 }
