@@ -1,10 +1,10 @@
 import { StyleSheet } from "react-native";
 import { Text, View } from "@/components/app/themed";
 
-export default function Home() {
+export default function Trainer() {
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Home</Text>
+      <Text style={styles.title}>Trainer</Text>
     </View>
   );
 }
