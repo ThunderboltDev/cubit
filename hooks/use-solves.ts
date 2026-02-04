@@ -3,6 +3,7 @@ import {
   addSolve,
   deleteSolve,
   getSolves,
+  subscribeToSolves,
   updateSolvePenalty,
 } from "@/lib/solves";
 import type { Solve } from "@/types";
@@ -15,6 +16,11 @@ export function useSolves(sessionId: string | undefined) {
   useEffect(() => {
     if (sessionId) {
       loadSolves();
+      return subscribeToSolves((updatedSessionId) => {
+        if (updatedSessionId === sessionId) {
+          loadSolves();
+        }
+      });
     }
   }, [sessionId]);
 
@@ -31,7 +37,6 @@ export function useSolves(sessionId: string | undefined) {
     if (!sessionId) return;
 
     const newSolve = await addSolve(sessionId, solve);
-    setSolves((prev) => [newSolve, ...prev]);
     return newSolve;
   }
 
@@ -39,16 +44,12 @@ export function useSolves(sessionId: string | undefined) {
     if (!sessionId) return;
 
     await deleteSolve(sessionId, solveId);
-    setSolves((prev) => prev.filter((s) => s.id !== solveId));
   }
 
-  async function setPenalty(solveId: string, penalty: Solve["penalty"]) {
+  async function setPenalty(solveId: string, penalty?: Solve["penalty"]) {
     if (!sessionId) return;
 
     await updateSolvePenalty(sessionId, solveId, penalty);
-    setSolves((prev) =>
-      prev.map((s) => (s.id === solveId ? { ...s, penalty } : s)),
-    );
   }
 
   return {

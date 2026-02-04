@@ -31,6 +31,7 @@ export default function TabLayout() {
 
   return (
     <Tabs
+      initialRouteName="index"
       screenOptions={({ route }) => ({
         tabBarActiveTintColor: colors[colorScheme].accent,
         tabBarInactiveTintColor: colors[colorScheme].mutedForeground,

@@ -1,19 +1,27 @@
 import { useEffect, useState } from "react";
 import {
+  DEFAULT_GLOBAL_SETTINGS,
+  DEFAULT_SESSION_SETTINGS,
+} from "@/constants/settings";
+import {
   getSessionSettings,
   getSettings,
   saveGlobalSettings,
   saveSessionSettings,
+  subscribeToSettings,
 } from "@/lib/settings";
 import type { GlobalSettings, SessionSettings } from "@/types";
 
 export function useGlobalSettings() {
-  const [settings, setSettings] = useState<GlobalSettings | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [settings, setSettings] = useState<GlobalSettings>(
+    DEFAULT_GLOBAL_SETTINGS,
+  );
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: initial load
   useEffect(() => {
     loadSettings();
+    return subscribeToSettings(loadSettings);
   }, []);
 
   async function loadSettings() {
@@ -25,20 +33,22 @@ export function useGlobalSettings() {
 
   async function updateSettings(updates: Partial<GlobalSettings>) {
     await saveGlobalSettings(updates);
-    setSettings((prev) => (prev ? { ...prev, ...updates } : null));
   }
 
   return { settings, isLoading, updateSettings, refreshSettings: loadSettings };
 }
 
 export function useSessionSettings(sessionId: string | undefined) {
-  const [settings, setSettings] = useState<SessionSettings | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [settings, setSettings] = useState<SessionSettings>(
+    DEFAULT_SESSION_SETTINGS,
+  );
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: initial load
   useEffect(() => {
     if (sessionId) {
       loadSettings();
+      return subscribeToSettings(loadSettings);
     }
   }, [sessionId]);
 
@@ -55,7 +65,6 @@ export function useSessionSettings(sessionId: string | undefined) {
     if (!sessionId) return;
 
     await saveSessionSettings(sessionId, updates);
-    setSettings((prev) => (prev ? { ...prev, ...updates } : null));
   }
 
   return {

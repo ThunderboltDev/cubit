@@ -6,6 +6,20 @@ import { STORAGE_KEYS } from "@/constants/storage";
 import { storage } from "@/lib/storage";
 import type { GlobalSettings, SessionSettings, Settings } from "@/types";
 
+type Listener = () => void;
+const listeners: Set<Listener> = new Set();
+
+function notifyListeners() {
+  for (const listener of listeners) {
+    listener();
+  }
+}
+
+export function subscribeToSettings(listener: Listener): () => void {
+  listeners.add(listener);
+  return () => listeners.delete(listener);
+}
+
 export async function getSettings(): Promise<Settings> {
   const settings = await storage.get<Settings>(STORAGE_KEYS.SETTINGS);
 
@@ -24,6 +38,7 @@ export async function saveGlobalSettings(
     ...current,
     global: { ...current.global, ...settings },
   });
+  notifyListeners();
 }
 
 export async function saveSessionSettings(
@@ -43,6 +58,7 @@ export async function saveSessionSettings(
       },
     },
   });
+  notifyListeners();
 }
 
 export async function getSessionSettings(
@@ -61,4 +77,5 @@ export async function deleteSessionSettings(sessionId: string): Promise<void> {
     ...current,
     sessions: rest,
   });
+  notifyListeners();
 }

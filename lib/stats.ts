@@ -1,3 +1,4 @@
+import { getEffectiveTime } from "@/lib/time";
 import type { Solve } from "@/types";
 
 export function calculateAverage(
@@ -6,12 +7,8 @@ export function calculateAverage(
 ): number | null {
   if (solves.length < count) return null;
 
-  const recent = solves.slice(0, count);
-  const times = recent.map((solve) =>
-    solve.penalty === "DNF" ?
-      Infinity
-    : solve.time + (solve.penalty === "+2" ? 2 : 0),
-  );
+  const recentSolves = solves.slice(0, count);
+  const times = recentSolves.map((solve) => getEffectiveTime(solve));
 
   if (times.filter((t) => t === Infinity).length > 1) return Infinity;
 
@@ -25,42 +22,18 @@ export function calculateAverage(
 export function calculateBest(solves: Solve[]): number | null {
   if (solves.length === 0) return null;
 
-  const valid = solves.filter((solve) => solve.penalty !== "DNF");
+  const valid = solves.filter((solve) => solve.penalty !== "dnf");
   if (valid.length === 0) return null;
 
-  return Math.min(
-    ...valid.map((solve) => solve.time + (solve.penalty === "+2" ? 2 : 0)),
-  );
+  return Math.min(...valid.map((solve) => getEffectiveTime(solve)));
 }
 
 export function calculateMean(solves: Solve[]): number | null {
   if (solves.length === 0) return null;
 
-  const valid = solves.filter((solve) => solve.penalty !== "DNF");
+  const valid = solves.filter((solve) => solve.penalty !== "dnf");
   if (valid.length === 0) return null;
 
-  const sum = valid.reduce(
-    (acc, solve) => acc + solve.time + (solve.penalty === "+2" ? 2 : 0),
-    0,
-  );
+  const sum = valid.reduce((acc, solve) => acc + getEffectiveTime(solve), 0);
   return sum / valid.length;
-}
-
-export function formatTime(ms: number, precision: 2 | 3 = 2): string {
-  if (ms === Infinity) return "DNF";
-
-  const seconds = Math.floor(ms / 1000);
-  const minutes = Math.floor(seconds / 60);
-  const hours = Math.floor(minutes / 60);
-  const remainder = (ms % 1000) / (precision === 2 ? 10 : 1);
-
-  if (hours > 0) {
-    return `${hours}:${(minutes % 60).toString().padStart(2, "0")}:${(seconds % 60).toString().padStart(2, "0")}.${remainder.toString().padStart(precision, "0")}`;
-  }
-
-  if (minutes > 0) {
-    return `${minutes}:${(seconds % 60).toString().padStart(2, "0")}.${remainder.toString().padStart(precision, "0")}`;
-  }
-
-  return `${seconds}.${remainder.toString().padStart(precision, "0")}`;
 }

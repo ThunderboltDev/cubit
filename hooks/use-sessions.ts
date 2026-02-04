@@ -4,6 +4,7 @@ import {
   getCurrentSession,
   getSessions,
   setCurrentSession,
+  subscribeToSessions,
 } from "@/lib/sessions";
 import type { Session } from "@/types";
 
@@ -13,9 +14,10 @@ export function useSessions() {
 
   const [selectedSession, setSelectedSession] = useState<Session | null>(null);
 
-  // biome-ignore lint/correctness/useExhaustiveDependencies: intial load
+  // biome-ignore lint/correctness/useExhaustiveDependencies: initial load
   useEffect(() => {
     loadSessions();
+    return subscribeToSessions(loadSessions);
   }, []);
 
   async function loadSessions() {
