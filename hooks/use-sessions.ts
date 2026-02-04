@@ -1,8 +1,10 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import {
   createSession,
+  deleteSession,
   getCurrentSession,
   getSessions,
+  renameSession,
   setCurrentSession,
   subscribeToSessions,
 } from "@/lib/sessions";
@@ -11,41 +13,32 @@ import type { Session } from "@/types";
 export function useSessions() {
   const [isLoading, setIsLoading] = useState(true);
   const [sessions, setSessions] = useState<Session[]>([]);
-
   const [selectedSession, setSelectedSession] = useState<Session | null>(null);
 
-  // biome-ignore lint/correctness/useExhaustiveDependencies: initial load
-  useEffect(() => {
-    loadSessions();
-    return subscribeToSessions(loadSessions);
-  }, []);
-
-  async function loadSessions() {
+  const loadSessions = useCallback(async () => {
     const [allSessions, currentSession] = await Promise.all([
       getSessions(),
       getCurrentSession(),
     ]);
 
-    if (allSessions.length === 0) {
-      const defaultSession = await createSession("Default");
-      allSessions.push(defaultSession);
-    }
-
     setSessions(allSessions);
     setSelectedSession(currentSession || allSessions[0]);
     setIsLoading(false);
-  }
+  }, []);
 
-  async function switchSession(session: Session) {
-    await setCurrentSession(session);
-    setSelectedSession(session);
-  }
+  useEffect(() => {
+    loadSessions();
+    return subscribeToSessions(loadSessions);
+  }, [loadSessions]);
 
   return {
     sessions,
     isLoading,
     selectedSession,
-    switchSession,
+    createSession,
+    deleteSession,
+    renameSession,
+    switchSession: setCurrentSession,
     refreshSessions: loadSessions,
   };
 }

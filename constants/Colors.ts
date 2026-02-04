@@ -89,7 +89,7 @@ export const colors = {
     secondaryForeground: "#f4f6f8",
 
     muted: "#373737",
-    mutedForeground: "#e8eaec",
+    mutedForeground: "#a0a2a4",
 
     border: "#373737",
     input: "#373737",

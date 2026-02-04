@@ -1,4 +1,4 @@
-import type { ReactNode } from "react";
+import type { ComponentProps, ReactNode } from "react";
 import {
   type StyleProp,
   StyleSheet,
@@ -9,7 +9,7 @@ import { View } from "@/components/ui/themed";
 import { colors } from "@/constants/colors";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 
-interface InputProps {
+interface InputProps extends ComponentProps<typeof TextInput> {
   placeholder?: string;
   value?: string;
   onChangeText?: (text: string) => void;
@@ -17,9 +17,9 @@ interface InputProps {
   keyboardType?: "default" | "email-address" | "numeric" | "phone-pad";
   autoCapitalize?: "none" | "sentences" | "words" | "characters";
   editable?: boolean;
-  style?: StyleProp<ViewStyle>;
   leftIcon?: ReactNode;
   rightIcon?: ReactNode;
+  containerStyle?: StyleProp<ViewStyle>;
 }
 
 export function Input({
@@ -30,6 +30,7 @@ export function Input({
   keyboardType,
   autoCapitalize,
   editable = true,
+  containerStyle,
   style,
   leftIcon,
   rightIcon,
@@ -47,7 +48,7 @@ export function Input({
           borderColor: color.border,
           opacity: editable ? 1 : 0.5,
         },
-        style,
+        containerStyle,
       ]}
     >
       {leftIcon && <View style={styles.leftIcon}>{leftIcon}</View>}

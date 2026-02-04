@@ -1,6 +1,6 @@
 import { DEFAULT_SESSION_SETTINGS } from "@/constants/settings";
 import { STORAGE_KEYS } from "@/constants/storage";
-import { getSettings, saveSessionSettings } from "@/lib/settings";
+import { saveSessionSettings } from "@/lib/settings";
 import { storage } from "@/lib/storage";
 import type { Session } from "@/types";
 
@@ -8,9 +8,7 @@ type Listener = () => void;
 const listeners: Set<Listener> = new Set();
 
 function notifyListeners() {
-  for (const listener of listeners) {
-    listener();
-  }
+  for (const listener of listeners) listener();
 }
 
 export function subscribeToSessions(listener: Listener): () => void {
@@ -19,39 +17,62 @@ export function subscribeToSessions(listener: Listener): () => void {
 }
 
 export async function getSessions(): Promise<Session[]> {
-  return (await storage.get<Session[]>(STORAGE_KEYS.SESSIONS)) || [];
+  const sessions = (await storage.get<Session[]>(STORAGE_KEYS.SESSIONS)) || [];
+
+  if (sessions.length === 0) {
+    const defaultSession = await createSession("Default");
+    return [defaultSession];
+  }
+
+  return sessions;
 }
 
 export async function createSession(name: string): Promise<Session> {
   const sessions = await getSessions();
-
   const newSession: Session = {
     id: `session-${Date.now()}`,
-    name,
+    name: name.trim(),
     createdAt: new Date().toISOString(),
   };
 
   await storage.set(STORAGE_KEYS.SESSIONS, [...sessions, newSession]);
-
-  const settings = await getSettings();
-
-  if (!settings.sessions[newSession.id]) {
-    await saveSessionSettings(newSession.id, DEFAULT_SESSION_SETTINGS);
-  }
+  await saveSessionSettings(newSession.id, DEFAULT_SESSION_SETTINGS);
 
   notifyListeners();
   return newSession;
 }
 
-export async function deleteSession(sessionId: string): Promise<void> {
+export async function renameSession(
+  id: string,
+  newName: string,
+): Promise<void> {
   const sessions = await getSessions();
-
-  await storage.set(
-    STORAGE_KEYS.SESSIONS,
-    sessions.filter((s) => s.id !== sessionId),
+  const updated = sessions.map((s) =>
+    s.id === id ? { ...s, name: newName.trim() } : s,
   );
 
+  await storage.set(STORAGE_KEYS.SESSIONS, updated);
+
+  const current = await getCurrentSession();
+  if (current?.id === id) {
+    await setCurrentSession({ ...current, name: newName.trim() });
+  }
+
+  notifyListeners();
+}
+
+export async function deleteSession(sessionId: string): Promise<void> {
+  const sessions = await getSessions();
+  const filtered = sessions.filter((s) => s.id !== sessionId);
+
+  await storage.set(STORAGE_KEYS.SESSIONS, filtered);
   await storage.remove(STORAGE_KEYS.SOLVES(sessionId));
+
+  const current = await getCurrentSession();
+  if (current?.id === sessionId) {
+    await storage.set(STORAGE_KEYS.CURRENT_SESSION, filtered[0] || null);
+  }
+
   notifyListeners();
 }
 
@@ -62,10 +83,4 @@ export async function getCurrentSession(): Promise<Session | null> {
 export async function setCurrentSession(session: Session): Promise<void> {
   await storage.set(STORAGE_KEYS.CURRENT_SESSION, session);
   notifyListeners();
-}
-
-export async function getSessionById(id: string): Promise<Session | null> {
-  const sessions = await getSessions();
-
-  return sessions.find((session) => session.id === id) || null;
 }

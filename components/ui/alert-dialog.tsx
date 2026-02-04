@@ -93,13 +93,6 @@ export function AlertDialogFooter({
   action,
   ...props
 }: AlertDialogFooterProps) {
-  if (children)
-    return (
-      <View style={styles.footer} {...props}>
-        {children}
-      </View>
-    );
-
   return (
     <View style={styles.footer} {...props}>
       {showCancel && (
@@ -107,7 +100,7 @@ export function AlertDialogFooter({
           {cancelLabel}
         </Button>
       )}
-      {action}
+      {children || action}
     </View>
   );
 }
