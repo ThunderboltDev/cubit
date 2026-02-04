@@ -7,76 +7,85 @@ export type SolvesListener = (sessionId: string) => void;
 const listeners: Set<SolvesListener> = new Set();
 
 function notifyListeners(sessionId: string) {
-  for (const listener of listeners) {
-    listener(sessionId);
-  }
+	for (const listener of listeners) {
+		listener(sessionId);
+	}
+}
+
+export function isSolveOfType<T extends Puzzle>(
+	solve: Solve,
+	puzzle: T
+): solve is Solve<T> {
+	return solve.puzzle === puzzle;
+}
+
+export function filterSolvesByPuzzle<T extends Puzzle>(
+	solves: Solve[],
+	puzzle: T
+): Solve<T>[] {
+	return solves.filter((solve): solve is Solve<T> => solve.puzzle === puzzle);
 }
 
 export function subscribeToSolves(listener: SolvesListener): () => void {
-  listeners.add(listener);
-  return () => listeners.delete(listener);
+	listeners.add(listener);
+	return () => listeners.delete(listener);
 }
 
-export async function getSolves(sessionId: string): Promise<Solve[]> {
-  return (await storage.get<Solve[]>(STORAGE_KEYS.SOLVES(sessionId))) || [];
+export async function getSolves(
+	sessionId: string,
+	puzzle: Puzzle
+): Promise<Solve[]> {
+	return (
+		(await storage.get<Solve[]>(STORAGE_KEYS.SOLVES(sessionId, puzzle))) || []
+	);
 }
 
 export async function addSolve(
-  sessionId: string,
-  solve: Omit<Solve, "id" | "createdAt">,
+	sessionId: string,
+	solve: Omit<Solve, "id" | "createdAt">
 ): Promise<Solve> {
-  const solves = await getSolves(sessionId);
+	const solves = await getSolves(sessionId, solve.puzzle);
 
-  const newSolve: Solve = {
-    ...solve,
-    id: randomUUID(),
-    createdAt: new Date().toISOString(),
-  };
+	const newSolve: Solve = {
+		...solve,
+		id: randomUUID(),
+		createdAt: new Date().toISOString(),
+	};
 
-  await storage.set(STORAGE_KEYS.SOLVES(sessionId), [newSolve, ...solves]);
-  notifyListeners(sessionId);
-  return newSolve;
+	await storage.set(STORAGE_KEYS.SOLVES(sessionId, solve.puzzle), [
+		newSolve,
+		...solves,
+	]);
+	notifyListeners(sessionId);
+	return newSolve;
 }
 
 export async function deleteSolve(
-  sessionId: string,
-  solveId: string,
+	sessionId: string,
+	solve: Solve
 ): Promise<void> {
-  const solves = await getSolves(sessionId);
+	const solves = await getSolves(sessionId, solve.puzzle);
 
-  await storage.set(
-    STORAGE_KEYS.SOLVES(sessionId),
-    solves.filter((s) => s.id !== solveId),
-  );
-  notifyListeners(sessionId);
+	await storage.set(
+		STORAGE_KEYS.SOLVES(sessionId, solve.puzzle),
+		solves.filter((s) => s.id !== solve.id)
+	);
+
+	notifyListeners(sessionId);
 }
 
 export async function updateSolvePenalty(
-  sessionId: string,
-  solveId: string,
-  penalty?: Solve["penalty"],
+	sessionId: string,
+	solve: Solve,
+	penalty?: Solve["penalty"]
 ): Promise<void> {
-  const solves = await getSolves(sessionId);
+	const solves = await getSolves(sessionId, solve.puzzle);
 
-  await storage.set(
-    STORAGE_KEYS.SOLVES(sessionId),
-    solves.map((s) =>
-      s.id === solveId ? { ...s, penalty: penalty ?? "none" } : s,
-    ),
-  );
-  notifyListeners(sessionId);
-}
-
-export async function getSolvesByPuzzle(
-  sessionId: string,
-  puzzle: Puzzle,
-): Promise<Solve[]> {
-  const solves = await getSolves(sessionId);
-
-  return solves.filter((s) => s.puzzle === puzzle);
-}
-
-export async function clearSolves(sessionId: string): Promise<void> {
-  await storage.remove(STORAGE_KEYS.SOLVES(sessionId));
-  notifyListeners(sessionId);
+	await storage.set(
+		STORAGE_KEYS.SOLVES(sessionId, solve.puzzle),
+		solves.map((s) =>
+			s.id === solve.id ? { ...s, penalty: penalty ?? "none" } : s
+		)
+	);
+	notifyListeners(sessionId);
 }

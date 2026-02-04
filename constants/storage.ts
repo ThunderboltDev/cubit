@@ -1,6 +1,9 @@
+import type { Puzzle } from "@/types";
+
 export const STORAGE_KEYS = {
-  SETTINGS: "@cubetimer/settings",
-  SESSIONS: "@cubetimer/sessions",
-  CURRENT_SESSION: "@cubetimer/current_session",
-  SOLVES: (sessionId: string) => `@cubetimer/solves/${sessionId}`,
+  SETTINGS: "@cubit/settings",
+  SESSIONS: "@cubit/sessions",
+  CURRENT_SESSION: "@cubit/current_session",
+  SOLVES: (sessionId: string, puzzle: Puzzle) =>
+    `@cubit/solves/${sessionId}/${puzzle}`,
 } as const;
