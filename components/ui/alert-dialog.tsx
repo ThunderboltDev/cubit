@@ -39,7 +39,8 @@ export function AlertDialog({ visible, onClose, children }: AlertDialogProps) {
   );
 }
 
-interface AlertDialogHeaderProps extends PropsWithChildren {
+interface AlertDialogHeaderProps
+  extends PropsWithChildren, ComponentProps<typeof View> {
   title?: string;
   description?: string;
 }
@@ -48,22 +49,36 @@ export function AlertDialogHeader({
   children,
   title,
   description,
+  ...props
 }: AlertDialogHeaderProps) {
-  if (children) return <View style={styles.header}>{children}</View>;
+  if (children)
+    return (
+      <View style={styles.header} {...props}>
+        {children}
+      </View>
+    );
 
   return (
-    <View style={styles.header}>
+    <View style={styles.header} {...props}>
       {title && <Text variant="h3">{title}</Text>}
       {description && <Text variant="muted">{description}</Text>}
     </View>
   );
 }
 
-export function AlertDialogContent({ children }: PropsWithChildren) {
-  return <View style={styles.content}>{children}</View>;
+export function AlertDialogContent({
+  children,
+  ...props
+}: PropsWithChildren<ComponentProps<typeof View>>) {
+  return (
+    <View style={styles.content} {...props}>
+      {children}
+    </View>
+  );
 }
 
-interface AlertDialogFooterProps extends PropsWithChildren {
+interface AlertDialogFooterProps
+  extends PropsWithChildren, ComponentProps<typeof View> {
   cancelLabel?: string;
   onCancel?: () => void;
   showCancel?: boolean;
@@ -76,11 +91,17 @@ export function AlertDialogFooter({
   onCancel,
   showCancel = true,
   action,
+  ...props
 }: AlertDialogFooterProps) {
-  if (children) return <View style={styles.footer}>{children}</View>;
+  if (children)
+    return (
+      <View style={styles.footer} {...props}>
+        {children}
+      </View>
+    );
 
   return (
-    <View style={styles.footer}>
+    <View style={styles.footer} {...props}>
       {showCancel && (
         <Button theme="secondary" onPress={onCancel} icon={Cancel01Icon}>
           {cancelLabel}

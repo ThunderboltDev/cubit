@@ -1,4 +1,4 @@
-import type { PropsWithChildren, ReactNode } from "react";
+import type { ComponentProps, PropsWithChildren, ReactNode } from "react";
 import { Modal, Pressable, StyleSheet, View } from "react-native";
 import { useColors } from "@/components/ui/themed";
 
@@ -37,7 +37,8 @@ export function Dialog({ visible, onClose, children }: DialogProps) {
   );
 }
 
-interface DialogHeaderProps extends PropsWithChildren {
+interface DialogHeaderProps
+  extends PropsWithChildren, ComponentProps<typeof View> {
   title?: string;
   description?: string;
 }
@@ -46,23 +47,43 @@ export function DialogHeader({
   children,
   title,
   description,
+  ...props
 }: DialogHeaderProps) {
-  if (children) return <View style={styles.header}>{children}</View>;
+  if (children)
+    return (
+      <View style={styles.header} {...props}>
+        {children}
+      </View>
+    );
 
   return (
-    <View style={styles.header}>
+    <View style={styles.header} {...props}>
       {title && <Text variant="h3">{title}</Text>}
       {description && <Text variant="muted">{description}</Text>}
     </View>
   );
 }
 
-export function DialogContent({ children }: PropsWithChildren) {
-  return <View style={styles.content}>{children}</View>;
+export function DialogContent({
+  children,
+  ...props
+}: PropsWithChildren<ComponentProps<typeof View>>) {
+  return (
+    <View style={styles.content} {...props}>
+      {children}
+    </View>
+  );
 }
 
-export function DialogFooter({ children }: PropsWithChildren) {
-  return <View style={styles.footer}>{children}</View>;
+export function DialogFooter({
+  children,
+  ...props
+}: PropsWithChildren<ComponentProps<typeof View>>) {
+  return (
+    <View style={styles.footer} {...props}>
+      {children}
+    </View>
+  );
 }
 
 import { Text } from "@/components/ui/themed";
