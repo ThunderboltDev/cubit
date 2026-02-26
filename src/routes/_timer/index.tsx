@@ -63,8 +63,8 @@ function TimerPage() {
         className="absolute inset-0 z-0 flex items-center justify-center bg-background"
         onMouseDown={handlePressIn}
         onMouseUp={handlePressOut}
-        onTouchStart={handlePressIn}
-        onTouchEnd={handlePressOut}
+        onTouchStart={timerState !== "running" ? handlePressIn : undefined}
+        onTouchEnd={timerState !== "running" ? handlePressOut : undefined}
         aria-label="Timer area. Press and hold to start, release to stop."
       >
         <div className="flex flex-col items-center">
