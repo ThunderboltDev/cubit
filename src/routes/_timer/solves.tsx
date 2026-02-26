@@ -57,7 +57,9 @@ export const Route = createFileRoute("/_timer/solves")({
 type PenaltyFilter = "all" | Penalty;
 type SortOption = "newest" | "oldest" | "best" | "worst";
 
-const container = {
+let hasPageAnimated = false;
+
+const containerVariants = {
   hidden: { opacity: 0 },
   show: {
     opacity: 1,
@@ -68,7 +70,7 @@ const container = {
   },
 };
 
-const item = {
+const itemVariants = {
   hidden: { opacity: 0, scale: 0.97, y: 12 },
   show: { opacity: 1, scale: 1, y: 0 },
 };
@@ -214,35 +216,34 @@ function SolvesPage() {
       </PageHeader>
 
       <PageBody>
-        {filteredSolves.length === 0 ? (
+        {filteredSolves.length === 0 ?
           <motion.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.4 }}
+            onAnimationComplete={() => (hasPageAnimated = true)}
             className="flex h-40 items-center justify-center text-muted-foreground"
           >
-            {solves.length === 0
-              ? "No solves yet. Start timing!"
-              : "No solves match this filter."}
+            {solves.length === 0 ?
+              "No solves yet. Start timing!"
+            : "No solves match this filter."}
           </motion.div>
-        ) : (
-          <motion.div
+        : <motion.div
             key={`${penaltyFilter}-${sortOption}`}
-            variants={container}
-            initial="hidden"
+            variants={containerVariants}
+            initial={hasPageAnimated ? "show" : "hidden"}
             animate="show"
             className="space-y-1"
+            onAnimationComplete={() => (hasPageAnimated = true)}
           >
             {filteredSolves.map((solve) => {
               const solveTimeTextClass =
-                solve.penalty === "DNF"
-                  ? "text-danger"
-                  : solve.penalty === "+2"
-                    ? "text-warning"
-                    : "text-foreground";
+                solve.penalty === "DNF" ? "text-danger"
+                : solve.penalty === "+2" ? "text-warning"
+                : "text-foreground";
 
               return (
-                <motion.div key={solve.id} variants={item}>
+                <motion.div key={solve.id} variants={itemVariants}>
                   <Button
                     variant="ghost"
                     className="group flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left transition-colors hover:bg-secondary hover:shadow-sm"
@@ -264,7 +265,7 @@ function SolvesPage() {
               );
             })}
           </motion.div>
-        )}
+        }
       </PageBody>
 
       <Sheet
@@ -281,11 +282,9 @@ function SolvesPage() {
                 <div>
                   <div
                     className={`font-mono text-5xl font-black tracking-tighter ${
-                      selectedSolve.penalty === "DNF"
-                        ? "text-danger"
-                        : selectedSolve.penalty === "+2"
-                          ? "text-warning"
-                          : "text-foreground"
+                      selectedSolve.penalty === "DNF" ? "text-danger"
+                      : selectedSolve.penalty === "+2" ? "text-warning"
+                      : "text-foreground"
                     }`}
                   >
                     {formatSolveTime(selectedSolve)}
@@ -337,9 +336,9 @@ function SolvesPage() {
                   <div className="grid grid-cols-3 gap-3">
                     <Button
                       className={
-                        selectedSolve.penalty === "OK"
-                          ? ""
-                          : "text-muted-foreground"
+                        selectedSolve.penalty === "OK" ?
+                          ""
+                        : "text-muted-foreground"
                       }
                       onClick={() => {
                         updatePenalty(selectedSolve.id, "OK");
@@ -356,9 +355,9 @@ function SolvesPage() {
                         selectedSolve.penalty === "+2" ? "warning" : "default"
                       }
                       className={
-                        selectedSolve.penalty !== "+2"
-                          ? "text-muted-foreground"
-                          : ""
+                        selectedSolve.penalty !== "+2" ?
+                          "text-muted-foreground"
+                        : ""
                       }
                       onClick={() => {
                         const newPenalty: Penalty =
@@ -378,9 +377,9 @@ function SolvesPage() {
                         selectedSolve.penalty === "DNF" ? "danger" : "default"
                       }
                       className={
-                        selectedSolve.penalty !== "DNF"
-                          ? "text-muted-foreground"
-                          : ""
+                        selectedSolve.penalty !== "DNF" ?
+                          "text-muted-foreground"
+                        : ""
                       }
                       onClick={() => {
                         const newPenalty: Penalty =

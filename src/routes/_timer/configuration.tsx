@@ -19,7 +19,7 @@ import {
 } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { createFileRoute } from "@tanstack/react-router";
-import { AnimatePresence, motion } from "framer-motion";
+import { motion } from "framer-motion";
 import { PuzzleIcon } from "@/components/puzzle/icon";
 import { ScramblePreview } from "@/components/timer/scramble-preview";
 import { SettingsItem, SettingsSection } from "@/components/timer/settings";
@@ -61,6 +61,8 @@ const STAT_TYPE_OPTIONS: {
 ];
 
 const MAX_STATS = 5;
+
+let hasPageAnimated = false;
 
 function PuzzleConfigurationPage() {
   const { currentPuzzle, updatePuzzle } = usePuzzles();
@@ -130,14 +132,17 @@ function PuzzleConfigurationPage() {
       <PageBody className="pb-12">
         <motion.div
           className="space-y-8"
-          initial="hidden"
+          initial={hasPageAnimated ? "show" : "hidden"}
           animate="show"
           variants={{
             show: {
               transition: {
-                staggerChildren: 0.1,
+                staggerChildren: 0.05,
               },
             },
+          }}
+          onAnimationComplete={() => {
+            hasPageAnimated = true;
           }}
         >
           <SettingsSection title="Identity">
@@ -352,92 +357,89 @@ function PuzzleConfigurationPage() {
               </Button>
             </SettingsItem>
 
-            <AnimatePresence initial={false}>
-              <div className="space-y-3 p-3">
-                {displayStats.stats.map((stat, index) => (
-                  <motion.div
-                    className="flex items-center gap-3"
-                    key={`stat-${stat.type}-${index}`}
-                    initial={{ opacity: 0, height: 0 }}
-                    animate={{ opacity: 1, height: "auto" }}
-                    exit={{ opacity: 0, height: 0 }}
-                  >
-                    <div className="flex flex-col gap-1">
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="size-6 text-muted-foreground hover:text-foreground rounded-full"
-                        onClick={() => moveStat(index, "up")}
-                        disabled={index === 0}
-                      >
-                        <HugeiconsIcon icon={ArrowUpIcon} size={14} />
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="size-6 text-muted-foreground hover:text-foreground rounded-full"
-                        onClick={() => moveStat(index, "down")}
-                        disabled={index === displayStats.stats.length - 1}
-                      >
-                        <HugeiconsIcon icon={ArrowDownIcon} size={14} />
-                      </Button>
-                    </div>
-
-                    <div className="flex flex-1 items-center gap-3 min-w-0">
-                      <Select
-                        value={stat.type}
-                        onValueChange={(value) =>
-                          updateStat(index, { type: value as StatType["type"] })
-                        }
-                      >
-                        <SelectTrigger className="w-44 h-9">
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {STAT_TYPE_OPTIONS.map((opt) => (
-                            <SelectItem key={opt.value} value={opt.value}>
-                              <HugeiconsIcon
-                                icon={opt.icon}
-                                size={14}
-                                className="mr-2"
-                              />
-                              {opt.label}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-
-                      <Input
-                        type="number"
-                        min={1}
-                        max={1000}
-                        value={stat.n === 0 ? "" : String(stat.n)}
-                        placeholder="∞"
-                        className="w-20"
-                        onChange={(e) =>
-                          updateStat(index, {
-                            n:
-                              e.target.value === "" ||
-                              Number(e.target.value) <= 0
-                                ? 0
-                                : parseInt(e.target.value, 10),
-                          })
-                        }
-                      />
-                    </div>
-
+            <div className="space-y-3 p-3">
+              {displayStats.stats.map((stat, index) => (
+                <div
+                  className="flex items-center gap-3"
+                  key={`stat-${stat.type}-${index}`}
+                >
+                  <div className="flex flex-col gap-1">
                     <Button
                       variant="ghost"
                       size="icon"
-                      className="size-6 rounded-full text-muted-foreground hover:text-danger hover:bg-danger/10"
-                      onClick={() => removeStat(index)}
+                      className="size-6 text-muted-foreground hover:text-foreground rounded-full"
+                      onClick={() => moveStat(index, "up")}
+                      disabled={index === 0}
                     >
-                      <HugeiconsIcon icon={Cancel01Icon} size={14} />
+                      <HugeiconsIcon icon={ArrowUpIcon} size={14} />
                     </Button>
-                  </motion.div>
-                ))}
-              </div>
-            </AnimatePresence>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="size-6 text-muted-foreground hover:text-foreground rounded-full"
+                      onClick={() => moveStat(index, "down")}
+                      disabled={index === displayStats.stats.length - 1}
+                    >
+                      <HugeiconsIcon icon={ArrowDownIcon} size={14} />
+                    </Button>
+                  </div>
+
+                  <div className="flex flex-1 items-center gap-3 min-w-0">
+                    <Select
+                      value={stat.type}
+                      onValueChange={(value) =>
+                        updateStat(index, { type: value as StatType["type"] })
+                      }
+                    >
+                      <SelectTrigger className="w-44 h-9">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {STAT_TYPE_OPTIONS.map((opt) => (
+                          <SelectItem key={opt.value} value={opt.value}>
+                            <HugeiconsIcon
+                              icon={opt.icon}
+                              size={14}
+                              className="mr-2"
+                            />
+                            {opt.label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+
+                    <Input
+                      type="number"
+                      min={1}
+                      max={1000}
+                      value={stat.n === 0 ? "" : String(stat.n)}
+                      placeholder="∞"
+                      className="w-20"
+                      onChange={(e) =>
+                        updateStat(index, {
+                          n:
+                            (
+                              e.target.value === "" ||
+                              Number(e.target.value) <= 0
+                            ) ?
+                              0
+                            : parseInt(e.target.value, 10),
+                        })
+                      }
+                    />
+                  </div>
+
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="size-6 rounded-full text-muted-foreground hover:text-danger hover:bg-danger/10"
+                    onClick={() => removeStat(index)}
+                  >
+                    <HugeiconsIcon icon={Cancel01Icon} size={14} />
+                  </Button>
+                </div>
+              ))}
+            </div>
           </SettingsSection>
         </motion.div>
       </PageBody>

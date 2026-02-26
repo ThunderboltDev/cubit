@@ -33,6 +33,8 @@ export const Route = createFileRoute("/_timer/")({
   component: TimerPage,
 });
 
+let hasTimerPageAnimated = false;
+
 function TimerPage() {
   const {
     currentPuzzle,
@@ -79,14 +81,16 @@ function TimerPage() {
             {getDisplayText(settings.timerPrecision)}
           </motion.span>
           <motion.span
-            initial={{ opacity: 0, y: 10 }}
+            initial={hasTimerPageAnimated ? false : { opacity: 0, y: 10 }}
             animate={{
               opacity:
-                timerState === "idle" ||
-                timerState === "inspection" ||
-                (timerState === "running" && currentPuzzle.multiphaseEnabled)
-                  ? 0.5
-                  : 0,
+                (
+                  timerState === "idle" ||
+                  timerState === "inspection" ||
+                  (timerState === "running" && currentPuzzle.multiphaseEnabled)
+                ) ?
+                  0.5
+                : 0,
               y: 0,
             }}
             className="mt-3 h-7 text-xs uppercase tracking-widest"
@@ -95,6 +99,7 @@ function TimerPage() {
           </motion.span>
         </div>
       </button>
+
       <motion.div
         initial={false}
         animate={{ opacity: controlsVisible ? 1 : 0 }}
@@ -102,7 +107,7 @@ function TimerPage() {
         className="pointer-events-none absolute inset-0 z-10 flex flex-col"
       >
         <motion.div
-          initial={{ opacity: 0, y: -20 }}
+          initial={hasTimerPageAnimated ? false : { opacity: 0, y: -20 }}
           animate={{
             opacity: controlsVisible ? 1 : 0,
             y: controlsVisible ? 0 : -20,
@@ -239,12 +244,19 @@ function TimerPage() {
             {stats?.stats.map((stat, index) => (
               <motion.div
                 key={stat.type + stat.n}
-                initial={{ opacity: 0, y: 20 }}
+                initial={hasTimerPageAnimated ? false : { opacity: 0, y: 20 }}
                 animate={{
                   opacity: controlsVisible ? 1 : 0,
                   y: controlsVisible ? 0 : 20,
                 }}
                 transition={{ delay: 0.1 + index * 0.05, duration: 0.3 }}
+                onAnimationComplete={
+                  index === stats.stats.length - 1 ?
+                    () => {
+                      hasTimerPageAnimated = true;
+                    }
+                  : undefined
+                }
               >
                 <StatCard
                   stat={stat}

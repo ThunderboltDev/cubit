@@ -16,6 +16,8 @@ export const Route = createFileRoute("/_timer/trainer")({
   component: TrainerPage,
 });
 
+let hasPageAnimated = false;
+
 const container = {
   hidden: { opacity: 0 },
   show: {
@@ -27,7 +29,7 @@ const container = {
   },
 };
 
-const item = {
+const itemVariants = {
   hidden: { opacity: 0, scale: 0.95, y: 20 },
   show: { opacity: 1, scale: 1, y: 0 },
 };
@@ -38,8 +40,10 @@ function TrainerPage() {
       <PageBody className="flex min-h-[80dvh] flex-col items-center justify-center py-12">
         <div className="relative mb-16 text-center">
           <motion.div
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
+            initial={hasPageAnimated ? "show" : "hidden"}
+            animate="show"
+            variants={itemVariants}
+            onAnimationComplete={() => (hasPageAnimated = true)}
             className="mb-4 inline-flex items-center rounded-full bg-accent/10 px-4 py-1.5 text-xs font-semibold tracking-wider text-accent uppercase ring-1 ring-accent/20"
           >
             <HugeiconsIcon icon={ZapIcon} className="mr-2 size-3.5" />
@@ -47,8 +51,9 @@ function TrainerPage() {
           </motion.div>
 
           <motion.h1
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
+            initial={hasPageAnimated ? "show" : "hidden"}
+            animate="show"
+            variants={itemVariants}
             transition={{ delay: 0.1 }}
             className="mb-4 text-4xl font-black tracking-tight sm:text-6xl md:text-7xl"
           >
@@ -59,8 +64,9 @@ function TrainerPage() {
           </motion.h1>
 
           <motion.p
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
+            initial={hasPageAnimated ? "show" : "hidden"}
+            animate="show"
+            variants={itemVariants}
             transition={{ delay: 0.3 }}
             className="mx-auto max-w-(--size-xs) text-lg text-muted-foreground"
           >
@@ -118,7 +124,11 @@ function FeatureCard({
   description: string;
 }) {
   return (
-    <motion.div variants={item}>
+    <motion.div
+      initial={hasPageAnimated ? "show" : "hidden"}
+      animate="show"
+      variants={itemVariants}
+    >
       <Card className="group relative h-full overflow-hidden border-none bg-accent/5 duration-250 hover:bg-accent/10 hover:shadow-xl hover:shadow-accent/10">
         <div className="relative z-10 flex flex-col p-6">
           <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-lg bg-accent text-white shadow-lg shadow-accent/20 group-hover:scale-105 duration-250">

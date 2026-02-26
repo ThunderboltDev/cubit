@@ -18,16 +18,12 @@ import { cn } from "@/lib/utils";
 
 const itemVariants = {
   hidden: {
-    y: 12,
-    scale: 0.97,
     opacity: 0,
   },
   show: {
-    y: 0,
-    scale: 1,
     opacity: 1,
     transition: {
-      duration: 0.25,
+      duration: 0.15,
     },
   },
 };

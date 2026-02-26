@@ -21,22 +21,25 @@ import type { ChartConfig } from "@/lib/constants";
 import { formatTime } from "@/lib/format-time";
 import { useStatisticsViewStore } from "@/stores/statistics-view";
 
-const container = {
+const containerVariants = {
   hidden: {
-    y: 12,
-    scale: 0.97,
     opacity: 0,
   },
   show: {
-    y: 0,
-    scale: 1,
     opacity: 1,
     transition: {
       duration: 0.25,
-      staggerChildren: 0.05,
+      staggerChildren: 0.1,
     },
   },
 };
+
+const itemVariants = {
+  hidden: { opacity: 0 },
+  show: { opacity: 1, transition: { duration: 0.25 } },
+};
+
+let hasPageAnimated = false;
 
 export const Route = createFileRoute("/_timer/statistics")({
   component: StatisticsPage,
@@ -77,10 +80,13 @@ function StatisticsPage() {
 
       <PageBody className="pb-12">
         <motion.div
-          variants={container}
-          initial="hidden"
+          variants={containerVariants}
+          initial={hasPageAnimated ? "show" : "hidden"}
           animate="show"
           className="space-y-8"
+          onAnimationComplete={() => {
+            hasPageAnimated = true;
+          }}
         >
           <div className="space-y-6">
             <AnimatePresence mode="popLayout">
@@ -94,19 +100,22 @@ function StatisticsPage() {
                 const hasData = data.length > 1;
 
                 return (
-                  <ChartCard
-                    key={config.id}
-                    config={config}
-                    data={data}
-                    hasData={hasData}
-                    onEdit={() => setEditingChart(config)}
-                  />
+                  <motion.div key={config.id} variants={itemVariants}>
+                    <ChartCard
+                      config={config}
+                      data={data}
+                      hasData={hasData}
+                      onEdit={() => setEditingChart(config)}
+                    />
+                  </motion.div>
                 );
               })}
             </AnimatePresence>
           </div>
 
-          <OverallStatistics stats={stats} format={format} />
+          <motion.div variants={itemVariants}>
+            <OverallStatistics stats={stats} format={format} />
+          </motion.div>
         </motion.div>
       </PageBody>
 
@@ -122,13 +131,13 @@ function StatisticsPage() {
           </SheetHeader>
           <ChartEditor
             initialConfig={
-              !editingChart || editingChart === "new"
-                ? {
-                    id: crypto.randomUUID(),
-                    type: "solves",
-                    n: 50,
-                  }
-                : editingChart
+              !editingChart || editingChart === "new" ?
+                {
+                  id: crypto.randomUUID(),
+                  type: "solves",
+                  n: 50,
+                }
+              : editingChart
             }
             isNew={editingChart === "new"}
             onSave={(config) => {

@@ -1,6 +1,5 @@
 import { Edit02Icon } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
-import { motion } from "framer-motion";
 import {
   CartesianGrid,
   Line,
@@ -14,11 +13,6 @@ import { Button } from "@/components/ui/button";
 import { Card, CardBody, CardHeader, CardTitle } from "@/components/ui/card";
 import type { ChartConfig } from "@/lib/constants";
 import { formatTime } from "@/lib/format-time";
-
-const item = {
-  hidden: { opacity: 0, y: 20 },
-  show: { opacity: 1, y: 0 },
-};
 
 function getChartTitle(config: ChartConfig): string {
   switch (config.type) {
@@ -84,7 +78,7 @@ interface ChartCardProps {
 
 export function ChartCard({ config, data, hasData, onEdit }: ChartCardProps) {
   return (
-    <motion.div variants={item} layout exit={{ opacity: 0, scale: 0.95 }}>
+    <div>
       <Card className="overflow-hidden transition-colors">
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
           <CardTitle className="text-base font-medium">
@@ -97,7 +91,7 @@ export function ChartCard({ config, data, hasData, onEdit }: ChartCardProps) {
           </div>
         </CardHeader>
         <CardBody>
-          {hasData ? (
+          {hasData ?
             <div className="h-[280px] w-full">
               <ResponsiveContainer width="100%" height="100%">
                 <LineChart data={data}>
@@ -158,13 +152,12 @@ export function ChartCard({ config, data, hasData, onEdit }: ChartCardProps) {
                 </LineChart>
               </ResponsiveContainer>
             </div>
-          ) : (
-            <div className="flex h-[280px] items-center justify-center text-sm text-muted-foreground">
+          : <div className="flex h-[280px] items-center justify-center text-sm text-muted-foreground">
               Not enough data to display this chart.
             </div>
-          )}
+          }
         </CardBody>
       </Card>
-    </motion.div>
+    </div>
   );
 }
