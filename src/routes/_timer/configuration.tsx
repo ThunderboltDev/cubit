@@ -131,7 +131,7 @@ function PuzzleConfigurationPage() {
 
       <PageBody className="pb-12">
         <motion.div
-          className="space-y-8"
+          className="space-y-10"
           initial={hasPageAnimated ? "show" : "hidden"}
           animate="show"
           variants={{
@@ -152,7 +152,7 @@ function PuzzleConfigurationPage() {
                 onChange={(e) =>
                   updatePuzzle(currentPuzzle.id, { name: e.target.value })
                 }
-                className="w-48"
+                className="w-32"
                 placeholder="3x3"
               />
             </SettingsItem>
@@ -300,7 +300,7 @@ function PuzzleConfigurationPage() {
                   })
                 }
               >
-                <SelectTrigger className="w-36">
+                <SelectTrigger className="w-32">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent align="end">
@@ -328,7 +328,7 @@ function PuzzleConfigurationPage() {
                   })
                 }
               >
-                <SelectTrigger className="w-36">
+                <SelectTrigger className="w-44">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent align="end">
@@ -348,7 +348,6 @@ function PuzzleConfigurationPage() {
               label={`Stats (${displayStats.stats.length}/${MAX_STATS})`}
             >
               <Button
-                className="border border-border"
                 onClick={addStat}
                 disabled={displayStats.stats.length >= MAX_STATS}
               >
@@ -391,17 +390,13 @@ function PuzzleConfigurationPage() {
                         updateStat(index, { type: value as StatType["type"] })
                       }
                     >
-                      <SelectTrigger className="w-44 h-9">
+                      <SelectTrigger className="w-44">
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
                         {STAT_TYPE_OPTIONS.map((opt) => (
                           <SelectItem key={opt.value} value={opt.value}>
-                            <HugeiconsIcon
-                              icon={opt.icon}
-                              size={14}
-                              className="mr-2"
-                            />
+                            <HugeiconsIcon icon={opt.icon} size={14} />
                             {opt.label}
                           </SelectItem>
                         ))}
@@ -414,7 +409,7 @@ function PuzzleConfigurationPage() {
                       max={1000}
                       value={stat.n === 0 ? "" : String(stat.n)}
                       placeholder="∞"
-                      className="w-20"
+                      className="w-15"
                       onChange={(e) =>
                         updateStat(index, {
                           n:

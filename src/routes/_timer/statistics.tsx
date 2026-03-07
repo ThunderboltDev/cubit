@@ -11,6 +11,7 @@ import { Page, PageBody, PageHeader, PageTitle } from "@/components/ui/page";
 import {
   Sheet,
   SheetContent,
+  SheetDescription,
   SheetHeader,
   SheetTitle,
 } from "@/components/ui/sheet";
@@ -128,6 +129,9 @@ function StatisticsPage() {
             <SheetTitle>
               {editingChart === "new" ? "Add Chart" : "Edit Chart"}
             </SheetTitle>
+            <SheetDescription>
+              Configure your chart settings below.
+            </SheetDescription>
           </SheetHeader>
           <ChartEditor
             initialConfig={

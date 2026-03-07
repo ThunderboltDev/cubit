@@ -35,6 +35,9 @@
     }
   },
   "css": {
+    "formatter": {
+      "lineWidth": 320
+    },
     "parser": {
       "tailwindDirectives": true
     }

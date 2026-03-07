@@ -115,9 +115,9 @@ function TimerPage() {
           transition={{ duration: 0.3, delay: 0.1 }}
           className="pointer-events-auto flex flex-col gap-3 p-4 pb-0 pt-20 md:pt-4"
         >
-          <Button
-            variant="ghost"
-            className="h-auto min-h-[52px] w-full whitespace-normal max-w-xl mx-auto"
+          <button
+            type="button"
+            className="h-auto min-h-[52px] w-full whitespace-normal max-w-xl mx-auto cursor-pointer hover:text-secondary-foreground active:brightness-85"
             onClick={() => setIsScrambleDialogOpen(true)}
           >
             <motion.span
@@ -129,7 +129,7 @@ function TimerPage() {
             >
               {scramble}
             </motion.span>
-          </Button>
+          </button>
           <div
             className={cn(
               "max-h-[80px] md:max-h-[120px] items-center justify-center transition-opacity",
@@ -170,7 +170,7 @@ function TimerPage() {
                     }
                   >
                     <HugeiconsIcon
-                      className="group-hover/button:scale-95 group-hover/button:rotate-12"
+                      className="group-hover/button:scale-95 group-hover/button:rotate-12 duration-400"
                       icon={Flag02Icon}
                     />
                   </Button>
@@ -201,7 +201,7 @@ function TimerPage() {
                     }
                   >
                     <HugeiconsIcon
-                      className="group-hover/button:scale-95 group-hover/button:rotate-180"
+                      className="group-hover/button:scale-95 group-hover/button:rotate-180 duration-400"
                       icon={UnavailableIcon}
                     />
                   </Button>
@@ -225,7 +225,7 @@ function TimerPage() {
                     onClick={() => setIsDeleteDialogOpen(true)}
                   >
                     <HugeiconsIcon
-                      className="group-hover/button:scale-95 group-hover/button:rotate-180"
+                      className="group-hover/button:scale-95 group-hover/button:rotate-180 duration-400"
                       icon={Delete02Icon}
                     />
                   </Button>

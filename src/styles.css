@@ -5,130 +5,75 @@
 @custom-variant dark (&:is(.dark *));
 
 :root {
-  --background: oklch(0.93 0 0);
-  --foreground: oklch(0.14 0 0);
+  --inset: oklch(0.88 0 0);
+  --background: oklch(0.92 0 0);
+  --muted: oklch(0.98 0 0);
 
-  --secondary: oklch(0.96 0 0);
-  --secondary-foreground: oklch(0.2 0 0);
+  --inset-shadow: oklch(0.86 0 0);
 
-  --muted: oklch(0.99 0 0);
-  --muted-foreground: oklch(0.45 0 0);
+  --background-shadow: oklch(0.9 0 0);
+  --background-inset-shadow: oklch(0.94 0 0);
 
-  --inset: oklch(0.9 0 0);
-  --border: oklch(0 0 0 / 10%);
+  --muted-shadow: oklch(0.96 0 0);
+  --muted-inset-shadow: oklch(1 0 0);
+
+  --foreground: oklch(0.15 0 0);
+  --muted-foreground: oklch(0.35 0 0);
+
+  --border: oklch(0.35 0 0 / 10%);
 
   --accent: oklch(0.55 0.2 245);
-
   --danger: oklch(0.55 0.2 28);
   --warning: oklch(0.57 0.2 85);
   --success: oklch(0.55 0.2 155);
 
   --radius: 0.5rem;
 
-  --font-sans:
-    "Rubik Variable", ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji",
-    "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
-  --font-mono:
-    "JetBrains Mono Variable", ui-monospace, SFMono-Regular, Menlo, Monaco,
-    Consolas, "Liberation Mono", "Courier New", monospace;
-
-  --shadow-xs:
-    0 1px 3px oklch(0 0 0 / 0.06), 0 1px 2px oklch(0 0 0 / 0.1),
-    inset 0 1px 1px -0.5px oklch(1 0 0 / 0.75);
-
-  --shadow-sm:
-    0 1px 3px oklch(0 0 0 / 0.06), 0 1px 2px oklch(0 0 0 / 0.1),
-    inset 0 1.5px 1.5px -0.75px oklch(1 0 0 / 0.75);
-
-  --shadow-md:
-    0 3px 6px oklch(0 0 0 / 0.06), 0 2px 4px oklch(0 0 0 / 0.1),
-    inset 0 2px 2px -1px oklch(1 0 0 / 0.75);
-
-  --shadow-lg:
-    0 6px 12px oklch(0 0 0 / 0.06), 0 4px 6px oklch(0 0 0 / 0.1),
-    inset 0 2.5px 2.5px -1.25px oklch(1 0 0 / 0.75);
-
-  --shadow-xl:
-    0 12px 20px oklch(0 0 0 / 0.06), 0 8px 10px oklch(0 0 0 / 0.1),
-    inset 0 3px 3px -1.5px oklch(1 0 0 / 0.75);
-
-  --inset-shadow-sm:
-    inset 0 1px 1px oklch(0 0 0 / 0.08),
-    inset 0 -1px 1px -0.5px oklch(1 0 0 / 0.75);
-
-  --inset-shadow-md:
-    inset 0 1.5px 1.5px oklch(0 0 0 / 0.08),
-    inset 0 -1px 1px -0.5px oklch(1 0 0 / 0.75);
-
-  --inset-shadow-lg:
-    inset 0 2px 2px oklch(0 0 0 / 0.08),
-    inset 0 -1px 1px -0.5px oklch(1 0 0 / 0.75);
+  --font-sans: "Rubik Variable", ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  --font-mono: "JetBrains Mono Variable", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
 }
 
 .dark {
-  --background: oklch(0.24 0 0);
-  --foreground: oklch(0.96 0 0);
-
-  --secondary: oklch(0.28 0 0);
-  --secondary-foreground: oklch(0.9 0 0);
-
-  --muted: oklch(0.32 0 0);
-  --muted-foreground: oklch(0.65 0 0);
-
   --inset: oklch(0.2 0 0);
-  --border: oklch(1 0 0 / 5%);
+  --background: oklch(0.24 0 0);
+  --muted: oklch(0.3 0 0);
 
-  --shadow-xs:
-    0 1px 3px oklch(0 0 0 / 0.12), 0 1px 2px oklch(0 0 0 / 0.24),
-    inset 0 1px 1px -0.5px oklch(1 0 0 / 0.04);
+  --inset-shadow: oklch(0.18 0 0);
 
-  --shadow-sm:
-    0 1px 3px oklch(0 0 0 / 0.12), 0 1px 2px oklch(0 0 0 / 0.24),
-    inset 0 1.5px 1.5px -0.75px oklch(1 0 0 / 0.05);
+  --background-shadow: oklch(0.22 0 0);
+  --background-inset-shadow: oklch(0.26 0 0);
 
-  --shadow-md:
-    0 3px 6px oklch(0 0 0 / 0.12), 0 2px 4px oklch(0 0 0 / 0.24),
-    inset 0 2px 2px -1px oklch(1 0 0 / 0.06);
+  --muted-shadow: oklch(0.28 0 0);
+  --muted-inset-shadow: oklch(0.32 0 0);
 
-  --shadow-lg:
-    0 6px 12px oklch(0 0 0 / 0.12), 0 4px 6px oklch(0 0 0 / 0.24),
-    inset 0 2.5px 2.5px -1.25px oklch(1 0 0 / 0.07);
+  --foreground: oklch(0.9 0 0);
+  --muted-foreground: oklch(0.7 0 0);
 
-  --shadow-xl:
-    0 12px 20px oklch(0 0 0 / 0.12), 0 8px 10px oklch(0 0 0 / 0.24),
-    inset 0 3px 3px -1.5px oklch(1 0 0 / 0.08);
-
-  --inset-shadow-sm:
-    inset 0 1px 1px oklch(0 0 0 / 0.3),
-    inset 0 -1px 1px -0.5px oklch(1 0 0 / 0.04);
-
-  --inset-shadow-md:
-    inset 0 1.5px 1.5px oklch(0 0 0 / 0.3),
-    inset 0 -1px 1px -0.5px oklch(1 0 0 / 0.05);
-
-  --inset-shadow-lg:
-    inset 0 2px 2px oklch(0 0 0 / 0.3),
-    inset 0 -1px 1px -0.5px oklch(1 0 0 / 0.06);
+  --border: oklch(0.7 0 0 / 10%);
 }
 
 @theme inline {
+  --color-inset: var(--inset);
   --color-background: var(--background);
-  --color-foreground: var(--foreground);
-
-  --color-secondary-foreground: var(--secondary-foreground);
-  --color-secondary: var(--secondary);
-
-  --color-muted-foreground: var(--muted-foreground);
   --color-muted: var(--muted);
 
-  --color-accent: var(--accent);
+  --color-inset-shadow: var(--inset-shadow);
 
+  --color-background-shadow: var(--background-shadow);
+  --color-background-inset-shadow: var(--background-inset-shadow);
+
+  --color-muted-shadow: var(--muted-shadow);
+  --color-muted-inset-shadow: var(--muted-inset-shadow);
+
+  --color-foreground: var(--foreground);
+  --color-muted-foreground: var(--muted-foreground);
+
+  --color-border: var(--border);
+
+  --color-accent: var(--accent);
   --color-danger: var(--danger);
   --color-success: var(--success);
   --color-warning: var(--warning);
-
-  --color-inset: var(--inset);
-  --color-border: var(--border);
 
   --radius-xs: calc(var(--radius) - 4px);
   --radius-sm: calc(var(--radius) - 2px);
@@ -136,15 +81,55 @@
   --radius-lg: calc(var(--radius) + 2px);
   --radius-xl: calc(var(--radius) + 4px);
 
-  --shadow-xs: var(--shadow-xs);
-  --shadow-sm: var(--shadow-sm);
-  --shadow-md: var(--shadow-md);
-  --shadow-lg: var(--shadow-lg);
-  --shadow-xl: var(--shadow-xl);
+  --text-xs: 0.75rem;
+  --text-xs--line-height: 1.6;
+  --text-sm: 0.875rem;
+  --text-sm--line-height: 1.55;
+  --text-base: 1rem;
+  --text-base--line-height: 1.6;
+  --text-lg: 1.125rem;
+  --text-lg--line-height: 1.55;
+  --text-xl: 1.25rem;
+  --text-xl--line-height: 1.5;
+  --text-2xl: 1.5rem;
+  --text-2xl--line-height: 1.4;
+  --text-3xl: 1.875rem;
+  --text-3xl--line-height: 1.3;
+  --text-4xl: 2.25rem;
+  --text-4xl--line-height: 1.2;
+  --text-5xl: 3rem;
+  --text-5xl--line-height: 1.15;
+  --text-6xl: 3.75rem;
+  --text-6xl--line-height: 1.1;
+  --text-7xl: 4.5rem;
+  --text-7xl--line-height: 1.05;
+  --text-8xl: 6rem;
+  --text-8xl--line-height: 1;
+  --text-9xl: 8rem;
+  --text-9xl--line-height: 1;
 
-  --inset-shadow-sm: var(--inset-shadow-sm);
-  --inset-shadow-md: var(--inset-shadow-md);
-  --inset-shadow-lg: var(--inset-shadow-lg);
+  --font-weight-thin: 100;
+  --font-weight-extralight: 200;
+  --font-weight-light: 300;
+  --font-weight-normal: 300;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+  --font-weight-extrabold: 800;
+  --font-weight-black: 900;
+
+  --tracking-tighter: -0.02em;
+  --tracking-tight: -0.01em;
+  --tracking-normal: 0em;
+  --tracking-wide: 0.01em;
+  --tracking-wider: 0.02em;
+  --tracking-widest: 0.04em;
+
+  --leading-tight: 1.2;
+  --leading-snug: 1.35;
+  --leading-normal: 1.6;
+  --leading-relaxed: 1.7;
+  --leading-loose: 2;
 
   --wrapper-xs: 12rem;
   --wrapper-sm: 24rem;
@@ -154,8 +139,18 @@
 
   --breakpoint-xs: 30rem;
 
-  --animate-accordion-down: accordion-down 0.3s var(--ease-out);
-  --animate-accordion-up: accordion-up 0.3s var(--ease-out);
+  --shadow-xs: 0 1px 0 0 oklch(0 0 0);
+  --shadow-sm: 0 2px 0 0 oklch(0 0 0);
+  --shadow-md: 0 3px 0 0 oklch(0 0 0);
+  --shadow-lg: 0 4px 0 0 oklch(0 0 0);
+  --shadow-xl: 0 5px 0 0 oklch(0 0 0);
+
+  --inset-shadow-xs: inset 0 1px 0 0 oklch(0 0 0);
+  --inset-shadow-sm: inset 0 2px 0 0 oklch(0 0 0);
+  --inset-shadow-md: inset 0 3px 0 0 oklch(0 0 0);
+
+  --animate-accordion-down: accordion-down 0.3s var(--ease-in-out);
+  --animate-accordion-up: accordion-up 0.3s var(--ease-in-out);
 
   @keyframes accordion-down {
     from {
@@ -187,22 +182,54 @@
 
   body {
     @apply min-h-screen bg-background text-foreground;
+    @apply transition-colors duration-200;
     @apply antialiased overflow-x-hidden;
   }
 
   a {
     @apply outline-accent/50 focus-visible:outline-1;
-    @apply duration-250 ease-out;
-    @apply rounded-[1px];
+    @apply duration-200 rounded-[1px];
   }
 
   .recharts-surface {
-    @apply focus-ring rounded-sm;
+    @apply focus-ring rounded-sm **:focus:outline-none;
 
     &:focus {
       outline: none;
     }
   }
+}
+
+@utility shadows {
+  @apply shadow-background-shadow inset-shadow-background-inset-shadow;
+}
+
+@utility shadows-muted {
+  @apply shadow-muted-shadow inset-shadow-muted-inset-shadow;
+}
+
+@utility shadows-inset {
+  @apply inset-shadow-inset-shadow;
+}
+
+@utility shadows-accent {
+  --tw-shadow-color: color-mix(in oklch, var(--accent), black 10%);
+  --tw-inset-shadow-color: color-mix(in oklch, var(--accent), white 10%);
+}
+
+@utility shadows-danger {
+  --tw-shadow-color: color-mix(in oklch, var(--danger), black 10%);
+  --tw-inset-shadow-color: color-mix(in oklch, var(--danger), white 10%);
+}
+
+@utility shadows-success {
+  --tw-shadow-color: color-mix(in oklch, var(--success), black 10%);
+  --tw-inset-shadow-color: color-mix(in oklch, var(--success), white 10%);
+}
+
+@utility shadows-warning {
+  --tw-shadow-color: color-mix(in oklch, var(--warning), black 10%);
+  --tw-inset-shadow-color: color-mix(in oklch, var(--warning), white 10%);
 }
 
 @utility text-responsive {
@@ -216,13 +243,12 @@
 }
 
 @utility input {
-  @apply h-9 flex w-full;
-  @apply text-secondary-foreground placeholder:text-muted-foreground text-responsive;
-  @apply rounded-sm border border-border bg-inset;
-  @apply px-2.5 py-1 inset-shadow-md;
-  @apply outline-none duration-250;
+  @apply h-9 px-2.5 py-1 flex bg-inset w-full;
+  @apply text-foreground placeholder:text-muted-foreground text-responsive;
+  @apply inset-shadow-sm shadows-inset;
+  @apply rounded-sm outline-none duration-200;
   @apply disabled:opacity-50 disabled:cursor-not-allowed;
-  @apply focus-visible:border-accent focus-visible:ring-3 focus-visible:ring-accent/50;
+  @apply focus-ring focus-visible:ring-foreground/50;
   @apply aria-invalid:border-danger/75 aria-invalid:text-danger/75;
   @apply aria-invalid:ring-danger/50 aria-invalid:placeholder:text-danger/75;
 }
@@ -247,10 +273,10 @@
   }
 
   &::-webkit-scrollbar-thumb {
-    @apply bg-border/80 rounded-full;
+    @apply bg-muted rounded-full;
   }
 
   &::-webkit-scrollbar-thumb:hover {
-    @apply bg-border/90;
+    @apply bg-muted-inset-shadow;
   }
 }

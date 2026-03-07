@@ -26,11 +26,9 @@ function Slider({
 
   const _values = useMemo(
     () =>
-      Array.isArray(value)
-        ? value
-        : Array.isArray(defaultValue)
-          ? defaultValue
-          : [min, max],
+      Array.isArray(value) ? value
+      : Array.isArray(defaultValue) ? defaultValue
+      : [min, max],
     [value, defaultValue, min, max],
   );
 
@@ -86,18 +84,18 @@ function Slider({
             <SliderPrimitive.Track
               ref={trackRef}
               data-slot="slider-track"
-              className="bg-inset rounded-full data-[orientation=horizontal]:h-1.5 data-[orientation=horizontal]:w-full data-[orientation=vertical]:h-full data-[orientation=vertical]:w-1.5 relative grow overflow-hidden select-none inset-shadow-sm"
+              className="bg-inset rounded-full data-[orientation=horizontal]:h-1.5 data-[orientation=horizontal]:w-full data-[orientation=vertical]:h-full data-[orientation=vertical]:w-1.5 relative grow overflow-hidden select-none inset-shadow-sm shadows-inset"
             >
               <SliderPrimitive.Indicator
                 data-slot="slider-range"
-                className="size-4 bg-accent select-none data-[orientation=horizontal]:h-full data-[orientation=vertical]:w-full inset-shadow-sm"
+                className="size-4 bg-accent select-none data-[orientation=horizontal]:h-full data-[orientation=vertical]:w-full inset-shadow-sm shadows-accent"
               />
             </SliderPrimitive.Track>
             {Array.from({ length: _values.length }, () => (
               <SliderPrimitive.Thumb
                 data-slot="slider-thumb"
                 key={crypto.randomUUID()}
-                className="border-none relative size-3.5 rounded-full shadow-xs bg-accent duration-200 transition-[color,box-shadow,transform,scale] ease-in-out after:absolute after:-inset-2 hover:scale-120 active:scale-95 block shrink-0 select-none disabled:pointer-events-none disabled:opacity-50"
+                className="border-3 border-accent relative size-3.5 rounded-full shadow-xs inset-shadow-xs shadows-accent bg-white duration-200 transition-[color,box-shadow,transform,scale] after:absolute after:-inset-2 hover:scale-120 active:scale-95 block shrink-0 select-none disabled:pointer-events-none disabled:opacity-50"
               />
             ))}
           </SliderPrimitive.Control>
@@ -126,7 +124,6 @@ function Slider({
       </div>
       {withBadge && (
         <Badge
-          variant="secondary"
           className={cn(
             "shrink-0 justify-center self-start font-mono",
             marks && "-mt-2",

@@ -37,7 +37,7 @@ function SettingsRoute() {
         <PageTitle>Settings</PageTitle>
         <PageDescription>Manage your preferences</PageDescription>
       </PageHeader>
-      <PageBody className="space-y-8">
+      <PageBody className="space-y-10">
         <SettingsSection title="Appearance">
           <SettingsItem label="Theme">
             <Select
@@ -100,9 +100,9 @@ function SettingsRoute() {
               marks={String}
               onValueChange={(value) =>
                 updateSettings({
-                  timerPrecision: (Array.isArray(value)
-                    ? value[0]
-                    : value) as TimerPrecision,
+                  timerPrecision: (Array.isArray(value) ?
+                    value[0]
+                  : value) as TimerPrecision,
                 })
               }
               withBadge={false}

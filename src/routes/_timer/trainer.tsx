@@ -129,10 +129,10 @@ function FeatureCard({
       animate="show"
       variants={itemVariants}
     >
-      <Card className="group relative h-full overflow-hidden border-none bg-accent/5 duration-250 hover:bg-accent/10 hover:shadow-xl hover:shadow-accent/10">
+      <Card className="group relative h-full overflow-hidden border-none bg-accent/10 duration-200 shadow-none inset-shadow-none">
         <div className="relative z-10 flex flex-col p-6">
-          <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-lg bg-accent text-white shadow-lg shadow-accent/20 group-hover:scale-105 duration-250">
-            <HugeiconsIcon icon={icon} className="h-6 w-6" />
+          <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-lg bg-accent text-white shadow-lg inset-shadow-xs shadows-accent group-hover:scale-105 duration-200">
+            <HugeiconsIcon icon={icon} className="size-6" />
           </div>
           <h3 className="mb-2 text-lg font-bold tracking-tight">{title}</h3>
           <p className="text-sm leading-relaxed text-muted-foreground">

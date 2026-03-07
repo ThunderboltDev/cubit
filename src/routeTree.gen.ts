@@ -14,6 +14,7 @@ import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as TimerRouteRouteImport } from './routes/_timer/route'
 import { Route as TimerIndexRouteImport } from './routes/_timer/index'
 import { Route as PuzzlesNewRouteImport } from './routes/puzzles/new'
+import { Route as PuzzlesCustomRouteImport } from './routes/puzzles/custom'
 import { Route as TimerTrainerRouteImport } from './routes/_timer/trainer'
 import { Route as TimerStatisticsRouteImport } from './routes/_timer/statistics'
 import { Route as TimerSolvesRouteImport } from './routes/_timer/solves'
@@ -41,6 +42,11 @@ const TimerIndexRoute = TimerIndexRouteImport.update({
 const PuzzlesNewRoute = PuzzlesNewRouteImport.update({
   id: '/puzzles/new',
   path: '/puzzles/new',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PuzzlesCustomRoute = PuzzlesCustomRouteImport.update({
+  id: '/puzzles/custom',
+  path: '/puzzles/custom',
   getParentRoute: () => rootRouteImport,
 } as any)
 const TimerTrainerRoute = TimerTrainerRouteImport.update({
@@ -72,6 +78,7 @@ export interface FileRoutesByFullPath {
   '/solves': typeof TimerSolvesRoute
   '/statistics': typeof TimerStatisticsRoute
   '/trainer': typeof TimerTrainerRoute
+  '/puzzles/custom': typeof PuzzlesCustomRoute
   '/puzzles/new': typeof PuzzlesNewRoute
 }
 export interface FileRoutesByTo {
@@ -81,6 +88,7 @@ export interface FileRoutesByTo {
   '/solves': typeof TimerSolvesRoute
   '/statistics': typeof TimerStatisticsRoute
   '/trainer': typeof TimerTrainerRoute
+  '/puzzles/custom': typeof PuzzlesCustomRoute
   '/puzzles/new': typeof PuzzlesNewRoute
   '/': typeof TimerIndexRoute
 }
@@ -93,6 +101,7 @@ export interface FileRoutesById {
   '/_timer/solves': typeof TimerSolvesRoute
   '/_timer/statistics': typeof TimerStatisticsRoute
   '/_timer/trainer': typeof TimerTrainerRoute
+  '/puzzles/custom': typeof PuzzlesCustomRoute
   '/puzzles/new': typeof PuzzlesNewRoute
   '/_timer/': typeof TimerIndexRoute
 }
@@ -106,6 +115,7 @@ export interface FileRouteTypes {
     | '/solves'
     | '/statistics'
     | '/trainer'
+    | '/puzzles/custom'
     | '/puzzles/new'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -115,6 +125,7 @@ export interface FileRouteTypes {
     | '/solves'
     | '/statistics'
     | '/trainer'
+    | '/puzzles/custom'
     | '/puzzles/new'
     | '/'
   id:
@@ -126,6 +137,7 @@ export interface FileRouteTypes {
     | '/_timer/solves'
     | '/_timer/statistics'
     | '/_timer/trainer'
+    | '/puzzles/custom'
     | '/puzzles/new'
     | '/_timer/'
   fileRoutesById: FileRoutesById
@@ -134,6 +146,7 @@ export interface RootRouteChildren {
   TimerRouteRoute: typeof TimerRouteRouteWithChildren
   SettingsRoute: typeof SettingsRoute
   UiTestRoute: typeof UiTestRoute
+  PuzzlesCustomRoute: typeof PuzzlesCustomRoute
   PuzzlesNewRoute: typeof PuzzlesNewRoute
 }
 
@@ -172,6 +185,13 @@ declare module '@tanstack/react-router' {
       path: '/puzzles/new'
       fullPath: '/puzzles/new'
       preLoaderRoute: typeof PuzzlesNewRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/puzzles/custom': {
+      id: '/puzzles/custom'
+      path: '/puzzles/custom'
+      fullPath: '/puzzles/custom'
+      preLoaderRoute: typeof PuzzlesCustomRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_timer/trainer': {
@@ -229,6 +249,7 @@ const rootRouteChildren: RootRouteChildren = {
   TimerRouteRoute: TimerRouteRouteWithChildren,
   SettingsRoute: SettingsRoute,
   UiTestRoute: UiTestRoute,
+  PuzzlesCustomRoute: PuzzlesCustomRoute,
   PuzzlesNewRoute: PuzzlesNewRoute,
 }
 export const routeTree = rootRouteImport

@@ -45,7 +45,7 @@ function BreadcrumbLink({ className, ...props }: ComponentProps<typeof Link>) {
   return (
     <Link
       data-slot="breadcrumb-link"
-      className={cn("hover:text-foreground duration-250", className)}
+      className={cn("hover:text-foreground duration-200", className)}
       {...props}
     />
   );

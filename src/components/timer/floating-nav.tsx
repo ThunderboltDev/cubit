@@ -81,13 +81,7 @@ export function FloatingNav({ hidden }: FloatingNavProps) {
                 transition={{ delay: 0.3, duration: 0.8, ease: "easeInOut" }}
                 className="z-1 absolute translate-x-1/2 left-0 top-0 w-1/2 h-px bg-linear-to-r from-transparent via-muted-foreground/50 to-transparent"
               />
-              <motion.div
-                initial={{ scaleX: 0 }}
-                animate={{ scaleX: 1 }}
-                transition={{ delay: 0.3, duration: 0.8, ease: "easeInOut" }}
-                className="z-1 absolute translate-x-1/2 left-0 bottom-0 w-1/2 h-px bg-linear-to-r from-transparent via-muted-foreground/50 to-transparent"
-              />
-              <div className="flex items-center gap-1.5 rounded-full border border-border bg-secondary p-1.5 shadow-lg">
+              <div className="flex items-center gap-1.5 rounded-full bg-muted p-1.5 shadow-md shadow-[color-mix(in_oklch,var(--muted),black_10%)] inset-shadow-xs inset-shadow-white/10 drop-shadow-lg drop-shadow-black/25">
                 {NAV_ITEMS.map((item, index) => {
                   const isActive = !!matchRoute({
                     to: item.href,
@@ -125,23 +119,21 @@ export function FloatingNav({ hidden }: FloatingNavProps) {
             <LinkButton
               to="/settings"
               size="icon-lg"
-              variant="outline"
               className="group/button rounded-full"
             >
               <HugeiconsIcon
                 icon={Settings02Icon}
-                className="size-5 group-hover/button:-rotate-180 group-active/button:scale-0.9 duration-250 ease-out"
+                className="size-5 group-hover/button:-rotate-180 group-active/button:scale-0.9 duration-400"
               />
             </LinkButton>
             <Button
               size="icon-lg"
-              variant="outline"
               onClick={() => generateNewScramble()}
               className="group/button rounded-full"
             >
               <HugeiconsIcon
                 icon={RotateClockwiseIcon}
-                className="size-5 group-hover/button:-rotate-180 duration-250 ease-out"
+                className="size-5 group-hover/button:-rotate-180 duration-400"
               />
             </Button>
           </motion.div>
@@ -163,7 +155,12 @@ function NavItem({
   return (
     <Link
       to={to}
-      className="group/nav-item hover:text-secondary-foreground relative flex items-center justify-center rounded-full p-3"
+      className={cn(
+        "group/nav-item relative flex items-center justify-center rounded-full p-3",
+        isActive ? "text-accent" : (
+          "text-muted-foreground hover:text-secondary-foreground"
+        ),
+      )}
     >
       <AnimatePresence>
         {isActive && (
@@ -180,9 +177,8 @@ function NavItem({
       <HugeiconsIcon
         icon={icon}
         className={cn(
-          "size-5 duration-250 ease-out",
+          "size-5 duration-200",
           "group-hover/nav-item:scale-110 group-active/nav-item:scale-95",
-          isActive ? "text-accent" : "text-muted-foreground",
         )}
       />
     </Link>
@@ -202,7 +198,7 @@ function PuzzleSelector() {
         <span className="font-semibold">{currentPuzzle.name}</span>
         <HugeiconsIcon
           icon={ArrowDown01Icon}
-          className="size-4 text-muted-foreground transition-transform duration-250 group-data-[state=open]:rotate-180"
+          className="size-4 text-muted-foreground transition-transform duration-200 group-data-[state=open]:rotate-180"
         />
       </DropdownMenuTrigger>
       <DropdownMenuContent align="start" className="w-56">
@@ -216,12 +212,13 @@ function PuzzleSelector() {
               <PuzzleIcon puzzleType={puzzle.type} size={16} />
               <span>{puzzle.name}</span>
             </div>
-            {puzzle.id === currentPuzzle.id && (
-              <HugeiconsIcon
-                icon={Tick02Icon}
-                className="size-4.5 text-accent"
-              />
-            )}
+            <HugeiconsIcon
+              icon={Tick02Icon}
+              className={cn(
+                "size-4.5 text-accent shrink-0",
+                puzzle.id !== currentPuzzle.id && "invisible",
+              )}
+            />
           </DropdownMenuItem>
         ))}
         <DropdownMenuSeparator />

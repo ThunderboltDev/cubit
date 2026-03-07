@@ -22,7 +22,7 @@ export function StatCard({ stat, style }: StatCardProps) {
   }
 
   return (
-    <div className="flex flex-col items-center justify-center rounded-xl min-w-[80px] flex-1 bg-secondary border border-border shadow-sm p-3">
+    <div className="flex flex-col items-center justify-center rounded-xl min-w-[80px] flex-1 bg-muted shadow-sm shadow-[color-mix(in_oklch,var(--muted),black_10%)] inset-shadow-xs inset-shadow-white/10 p-3">
       <span className="uppercase tracking-wide text-muted-foreground text-xs mb-1">
         {getStatLabel(stat)}
       </span>
