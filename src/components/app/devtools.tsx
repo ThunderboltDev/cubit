@@ -23,9 +23,9 @@ import { Switch } from "@/components/ui/switch";
 import { PUZZLE_TYPES } from "@/lib/constants";
 import { db } from "@/lib/db";
 import { generateBulkSolves } from "@/lib/generate-solves";
+import { cn } from "@/lib/utils";
 import { useDevToolsStore } from "@/stores/devtools";
 import { usePuzzlesStore } from "@/stores/puzzles";
-import { cn } from "@/lib/utils";
 
 export function DevToolsProvider() {
   const { devModeEnabled, enableDevMode } = useDevToolsStore();
@@ -177,7 +177,14 @@ function DevToolsSheet() {
         message: err instanceof Error ? err.message : "Unknown error",
       });
     }
-  }, [puzzleName, solveCount, multiphaseEnabled, multiphaseCount, addPuzzle]);
+  }, [
+    puzzleName,
+    solveCount,
+    multiphaseEnabled,
+    multiphaseCount,
+    addPuzzle,
+    disableDevMode,
+  ]);
 
   const isGenerating = status.state === "generating";
   const isValid =
