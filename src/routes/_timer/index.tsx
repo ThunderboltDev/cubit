@@ -84,13 +84,11 @@ function TimerPage() {
             initial={hasTimerPageAnimated ? false : { opacity: 0, y: 10 }}
             animate={{
               opacity:
-                (
-                  timerState === "idle" ||
-                  timerState === "inspection" ||
-                  (timerState === "running" && currentPuzzle.multiphaseEnabled)
-                ) ?
-                  0.5
-                : 0,
+                timerState === "idle" ||
+                timerState === "inspection" ||
+                (timerState === "running" && currentPuzzle.multiphaseEnabled)
+                  ? 0.5
+                  : 0,
               y: 0,
             }}
             className="mt-3 h-7 text-xs uppercase tracking-widest"
@@ -251,11 +249,11 @@ function TimerPage() {
                 }}
                 transition={{ delay: 0.1 + index * 0.05, duration: 0.3 }}
                 onAnimationComplete={
-                  index === stats.stats.length - 1 ?
-                    () => {
-                      hasTimerPageAnimated = true;
-                    }
-                  : undefined
+                  index === stats.stats.length - 1
+                    ? () => {
+                        hasTimerPageAnimated = true;
+                      }
+                    : undefined
                 }
               >
                 <StatCard

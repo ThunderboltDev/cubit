@@ -102,9 +102,9 @@ function SettingsRoute() {
               marks={String}
               onValueChange={(value) =>
                 updateSettings({
-                  timerPrecision: (Array.isArray(value) ?
-                    value[0]
-                  : value) as TimerPrecision,
+                  timerPrecision: (Array.isArray(value)
+                    ? value[0]
+                    : value) as TimerPrecision,
                 })
               }
               withBadge={false}

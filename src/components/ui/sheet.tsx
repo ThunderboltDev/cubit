@@ -66,30 +66,30 @@ function SheetContent({
           "shadow-lg inset-shadow-sm shadows drop-shadow-lg",
           "data-open:animate-in data-open:fade-in-0",
           "data-closed:animate-out data-closed:fade-out-0",
-          responsive ?
-            [
-              "inset-x-0 bottom-0 h-auto rounded-t-md",
-              "md:inset-y-0 md:bottom-auto md:h-full! md:w-3/4 md:border-t-0",
-              side === "right" ?
-                "md:right-0 md:left-auto md:rounded-none md:rounded-l-lg md:data-closed:slide-out-to-right-10 md:data-open:slide-in-from-right-10"
-              : "",
-              side === "left" ?
-                "md:left-0 md:right-auto md:rounded-none md:rounded-r-lg md:data-closed:slide-out-to-left-10 md:data-open:slide-in-from-left-10"
-              : "",
-              "md:sm:max-w-sm",
-              "data-closed:slide-out-to-bottom-10 data-open:slide-in-from-bottom-10",
-              "md:data-closed:slide-out-to-bottom-0 md:data-open:slide-in-from-bottom-0",
-            ]
-          : [
-              side === "right" &&
-                "inset-y-0 right-0 h-dvh w-3/4 border-l data-[side=right]:data-closed:slide-out-to-right-10 data-[side=right]:data-open:slide-in-from-right-10 sm:max-w-sm",
-              side === "left" &&
-                "inset-y-0 left-0 h-dvh w-3/4 border-r data-[side=left]:data-closed:slide-out-to-left-10 data-[side=left]:data-open:slide-in-from-left-10 sm:max-w-sm",
-              side === "top" &&
-                "inset-x-0 top-0 h-auto border-b data-[side=top]:data-closed:slide-out-to-top-10 data-[side=top]:data-open:slide-in-from-top-10",
-              side === "bottom" &&
-                "inset-x-0 bottom-0 h-auto border-t data-[side=bottom]:data-closed:slide-out-to-bottom-10 data-[side=bottom]:data-open:slide-in-from-bottom-10",
-            ],
+          responsive
+            ? [
+                "inset-x-0 bottom-0 h-auto rounded-t-md",
+                "md:inset-y-0 md:bottom-auto md:h-full! md:w-3/4 md:border-t-0",
+                side === "right"
+                  ? "md:right-0 md:left-auto md:rounded-none md:rounded-l-lg md:data-closed:slide-out-to-right-10 md:data-open:slide-in-from-right-10"
+                  : "",
+                side === "left"
+                  ? "md:left-0 md:right-auto md:rounded-none md:rounded-r-lg md:data-closed:slide-out-to-left-10 md:data-open:slide-in-from-left-10"
+                  : "",
+                "md:sm:max-w-sm",
+                "data-closed:slide-out-to-bottom-10 data-open:slide-in-from-bottom-10",
+                "md:data-closed:slide-out-to-bottom-0 md:data-open:slide-in-from-bottom-0",
+              ]
+            : [
+                side === "right" &&
+                  "inset-y-0 right-0 h-dvh w-3/4 border-l data-[side=right]:data-closed:slide-out-to-right-10 data-[side=right]:data-open:slide-in-from-right-10 sm:max-w-sm",
+                side === "left" &&
+                  "inset-y-0 left-0 h-dvh w-3/4 border-r data-[side=left]:data-closed:slide-out-to-left-10 data-[side=left]:data-open:slide-in-from-left-10 sm:max-w-sm",
+                side === "top" &&
+                  "inset-x-0 top-0 h-auto border-b data-[side=top]:data-closed:slide-out-to-top-10 data-[side=top]:data-open:slide-in-from-top-10",
+                side === "bottom" &&
+                  "inset-x-0 bottom-0 h-auto border-t data-[side=bottom]:data-closed:slide-out-to-bottom-10 data-[side=bottom]:data-open:slide-in-from-bottom-10",
+              ],
           className,
         )}
         {...props}

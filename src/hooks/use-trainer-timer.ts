@@ -166,9 +166,11 @@ export function useTrainerTimer({
 
         const remainingSec = Math.ceil(remaining / 1000);
         const currentColor: "normal" | "warning" | "danger" =
-          remainingSec <= 3 ? "danger"
-          : remainingSec <= 7 ? "warning"
-          : "normal";
+          remainingSec <= 3
+            ? "danger"
+            : remainingSec <= 7
+              ? "warning"
+              : "normal";
 
         if (currentColor !== lastInspectionColorRef.current) {
           lastInspectionColorRef.current = currentColor;

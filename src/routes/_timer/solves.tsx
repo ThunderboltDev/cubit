@@ -211,7 +211,7 @@ function SolvesPage() {
       </PageHeader>
 
       <PageBody>
-        {filteredSolves.length === 0 ?
+        {filteredSolves.length === 0 ? (
           <motion.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
@@ -219,11 +219,12 @@ function SolvesPage() {
             onAnimationComplete={() => (hasPageAnimated = true)}
             className="flex h-40 items-center justify-center text-muted-foreground"
           >
-            {solves.length === 0 ?
-              "No solves yet. Start timing!"
-            : "No solves match this filter."}
+            {solves.length === 0
+              ? "No solves yet. Start timing!"
+              : "No solves match this filter."}
           </motion.div>
-        : <motion.div
+        ) : (
+          <motion.div
             key={`${penaltyFilter}-${sortOption}`}
             variants={containerVariants}
             initial={hasPageAnimated ? "show" : "hidden"}
@@ -264,7 +265,7 @@ function SolvesPage() {
               );
             })}
           </motion.div>
-        }
+        )}
       </PageBody>
 
       <Sheet
@@ -459,9 +460,11 @@ function PenaltyPill({
   onClick: () => void;
 }) {
   const activeClasses =
-    variant === "warning" ? "bg-warning text-white shadows-warning"
-    : variant === "danger" ? "bg-danger text-white shadows-danger"
-    : "bg-muted shadows-muted text-foreground";
+    variant === "warning"
+      ? "bg-warning text-white shadows-warning"
+      : variant === "danger"
+        ? "bg-danger text-white shadows-danger"
+        : "bg-muted shadows-muted text-foreground";
 
   return (
     <button

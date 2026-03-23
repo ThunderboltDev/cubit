@@ -40,10 +40,10 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
+import { PUZZLE_LABELS } from "@/data/puzzles";
 import { usePuzzles } from "@/hooks/use-puzzles";
 import type { InputMethod } from "@/types/puzzles";
 import type { StatType } from "@/types/stats";
-import { PUZZLE_LABELS } from "@/data/puzzles";
 
 export const Route = createFileRoute("/_timer/configuration")({
   component: PuzzleConfigurationPage,
@@ -413,12 +413,9 @@ function PuzzleConfigurationPage() {
                       onChange={(e) =>
                         updateStat(index, {
                           n:
-                            (
-                              e.target.value === "" ||
-                              Number(e.target.value) <= 0
-                            ) ?
-                              0
-                            : parseInt(e.target.value, 10),
+                            e.target.value === "" || Number(e.target.value) <= 0
+                              ? 0
+                              : parseInt(e.target.value, 10),
                         })
                       }
                     />

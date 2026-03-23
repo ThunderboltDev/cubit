@@ -135,13 +135,13 @@ function StatisticsPage() {
           </SheetHeader>
           <ChartEditor
             initialConfig={
-              !editingChart || editingChart === "new" ?
-                {
-                  id: crypto.randomUUID(),
-                  type: "solves",
-                  n: 50,
-                }
-              : editingChart
+              !editingChart || editingChart === "new"
+                ? {
+                    id: crypto.randomUUID(),
+                    type: "solves",
+                    n: 50,
+                  }
+                : editingChart
             }
             isNew={editingChart === "new"}
             onSave={(config) => {

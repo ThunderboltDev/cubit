@@ -1,4 +1,5 @@
 import { useMemo } from "react";
+import type { ChartConfig } from "@/data/defaults";
 import { usePuzzles } from "@/hooks/use-puzzles";
 import { useSolves } from "@/hooks/use-solves";
 import {
@@ -13,7 +14,6 @@ import {
   getEffectiveTime,
   type OverallStats,
 } from "@/lib/stats";
-import type { ChartConfig } from "@/data/defaults";
 
 export type ExtendedStats = OverallStats & {
   currentMo5: number | null;

@@ -15,9 +15,8 @@ export function Providers({ children }: PropsWithChildren) {
     let effectiveTheme: "light" | "dark";
 
     if (newTheme === "system") {
-      effectiveTheme =
-        window.matchMedia("(prefers-color-scheme: dark)").matches ?
-          "dark"
+      effectiveTheme = window.matchMedia("(prefers-color-scheme: dark)").matches
+        ? "dark"
         : "light";
     } else {
       effectiveTheme = newTheme;
@@ -51,11 +50,7 @@ export function Providers({ children }: PropsWithChildren) {
   }, [theme]);
 
   const toggleTheme = () => {
-    setTheme(
-      theme === "dark" ? "light"
-      : theme === "light" ? "dark"
-      : "dark",
-    );
+    setTheme(theme === "dark" ? "light" : theme === "light" ? "dark" : "dark");
   };
 
   useHotkeys("l", toggleTheme, { preventDefault: true });
