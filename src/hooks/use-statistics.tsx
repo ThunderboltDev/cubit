@@ -1,7 +1,6 @@
 import { useMemo } from "react";
 import { usePuzzles } from "@/hooks/use-puzzles";
 import { useSolves } from "@/hooks/use-solves";
-import type { ChartConfig } from "@/lib/constants";
 import {
   calculateBestConsistency,
   calculateBestMean,
@@ -14,6 +13,7 @@ import {
   getEffectiveTime,
   type OverallStats,
 } from "@/lib/stats";
+import type { ChartConfig } from "@/data/defaults";
 
 export type ExtendedStats = OverallStats & {
   currentMo5: number | null;

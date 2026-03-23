@@ -10,7 +10,7 @@ import {
 } from "recharts";
 import { Button } from "@/components/ui/button";
 import { Card, CardBody, CardHeader, CardTitle } from "@/components/ui/card";
-import type { ChartConfig } from "@/lib/constants";
+import type { ChartConfig } from "@/data/defaults";
 import { formatTime } from "@/lib/format-time";
 
 function getChartTitle(config: ChartConfig): string {

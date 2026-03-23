@@ -23,12 +23,10 @@ import {
 } from "@/components/ui/select";
 import { Slider } from "@/components/ui/slider";
 import { Switch } from "@/components/ui/switch";
+import { DEFAULT_DISPLAY_STATS } from "@/data/defaults";
+import { SPEFFZ_333 } from "@/data/lettering/speffz/333";
+import { PUZZLE_LABELS, PUZZLE_TYPES } from "@/data/puzzles";
 import { usePuzzles } from "@/hooks/use-puzzles";
-import {
-  DEFAULT_DISPLAY_STATS,
-  PUZZLE_LABELS,
-  PUZZLE_TYPES,
-} from "@/lib/constants";
 import type { InputMethod, PuzzleType } from "@/types/puzzles";
 
 export const Route = createFileRoute("/puzzles/custom")({
@@ -53,7 +51,8 @@ function CustomPuzzlePage() {
 
   const handleSubmit = (e: SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const puzzleData = {
+
+    createPuzzle({
       name: name.trim() || type,
       type,
       inspectionEnabled,
@@ -65,9 +64,9 @@ function CustomPuzzlePage() {
       scramblePreview,
       scramblePreviewVisualization: "3D" as const,
       displayStats: DEFAULT_DISPLAY_STATS,
-    };
-
-    createPuzzle(puzzleData);
+      method: "Beginner",
+      lettering: SPEFFZ_333,
+    });
     navigate({ to: "/" });
   };
 

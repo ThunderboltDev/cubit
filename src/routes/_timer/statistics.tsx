@@ -15,10 +15,10 @@ import {
   SheetHeader,
   SheetTitle,
 } from "@/components/ui/sheet";
+import type { ChartConfig } from "@/data/defaults";
 import { usePuzzles } from "@/hooks/use-puzzles";
 import { useSettings } from "@/hooks/use-settings";
 import { useStatistics } from "@/hooks/use-statistics";
-import type { ChartConfig } from "@/lib/constants";
 import { formatTime } from "@/lib/format-time";
 import { useStatisticsViewStore } from "@/stores/statistics-view";
 

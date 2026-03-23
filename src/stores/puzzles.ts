@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import { DEFAULT_DISPLAY_STATS, DEFAULT_PUZZLE } from "@/lib/constants";
+import { DEFAULT_DISPLAY_STATS, DEFAULT_PUZZLE } from "@/data/defaults";
 import type { Puzzle } from "@/types/puzzles";
 import type { DisplayStatsConfig } from "@/types/stats";
 
@@ -28,6 +28,7 @@ export const usePuzzlesStore = create<PuzzlesState>()(
           ...puzzle,
           id,
           displayStats: puzzle.displayStats || DEFAULT_DISPLAY_STATS,
+          trainerMethodId: puzzle.trainerMethodId ?? null,
         };
         set((state) => ({
           puzzles: [...state.puzzles, newPuzzle],
@@ -47,9 +48,9 @@ export const usePuzzlesStore = create<PuzzlesState>()(
         set((state) => {
           const newPuzzles = state.puzzles.filter((puzzle) => puzzle.id !== id);
           const newActiveId =
-            state.activePuzzleId === id
-              ? newPuzzles[0]?.id || null
-              : state.activePuzzleId;
+            state.activePuzzleId === id ?
+              newPuzzles[0]?.id || null
+            : state.activePuzzleId;
           return {
             puzzles: newPuzzles,
             activePuzzleId: newActiveId,
@@ -69,9 +70,9 @@ export const usePuzzlesStore = create<PuzzlesState>()(
       updateDisplayStats: (puzzleId, config) => {
         set((state) => ({
           puzzles: state.puzzles.map((puzzle) =>
-            puzzle.id === puzzleId
-              ? { ...puzzle, displayStats: config }
-              : puzzle,
+            puzzle.id === puzzleId ?
+              { ...puzzle, displayStats: config }
+            : puzzle,
           ),
         }));
       },

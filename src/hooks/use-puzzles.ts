@@ -1,5 +1,5 @@
 import { useCallback, useMemo } from "react";
-import { DEFAULT_PUZZLE } from "@/lib/constants";
+import { DEFAULT_PUZZLE } from "@/data/defaults";
 import { db } from "@/lib/db";
 import { usePuzzlesStore } from "@/stores/puzzles";
 import type { Puzzle } from "@/types/puzzles";

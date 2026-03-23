@@ -41,9 +41,9 @@ import {
 } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 import { usePuzzles } from "@/hooks/use-puzzles";
-import { PUZZLE_LABELS } from "@/lib/constants";
 import type { InputMethod } from "@/types/puzzles";
 import type { StatType } from "@/types/stats";
+import { PUZZLE_LABELS } from "@/data/puzzles";
 
 export const Route = createFileRoute("/_timer/configuration")({
   component: PuzzleConfigurationPage,

@@ -2,15 +2,22 @@ import { Link } from "@tanstack/react-router";
 import type { ComponentProps } from "react";
 import { Button } from "@/components/ui/button";
 
-type LinkButtonProps = ComponentProps<typeof Link> &
-  ComponentProps<typeof Button>;
+type LinkButtonProps = Omit<ComponentProps<typeof Link>, "to"> &
+  ComponentProps<typeof Button> & {
+    href: ComponentProps<typeof Link>["to"];
+  };
 
-export function LinkButton({ className, onClick, ...props }: LinkButtonProps) {
+export function LinkButton({
+  className,
+  onClick,
+  href,
+  ...props
+}: LinkButtonProps) {
   return (
     <Button
       nativeButton={false}
       className={className}
-      render={<Link {...props} />}
+      render={<Link to={href} {...props} />}
       onClick={onClick}
       {...props}
     />

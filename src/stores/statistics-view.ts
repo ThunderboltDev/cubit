@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import { type ChartConfig, DEFAULT_CHART_CONFIG } from "@/lib/constants";
+import { type ChartConfig, DEFAULT_CHART_CONFIG } from "@/data/defaults";
 
 interface StatisticsViewState {
   charts: Record<string, ChartConfig[]>;

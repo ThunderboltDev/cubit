@@ -1,37 +1,22 @@
 import {
-  Add01Icon,
-  ArrowDown01Icon,
   Chart01Icon,
-  GitForkIcon,
   LeftToRightListDashIcon,
-  RotateClockwiseIcon,
   Settings02Icon,
   SlidersHorizontalIcon,
-  Tick02Icon,
+  Timer01Icon,
   Timer02Icon,
 } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { Link, useMatchRoute } from "@tanstack/react-router";
 import { AnimatePresence, motion } from "framer-motion";
 import type { ComponentProps } from "react";
-import { PuzzleIcon } from "@/components/puzzle/icon";
-import { Button } from "@/components/ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import { LinkButton } from "@/components/ui/link-button";
-import { useScramble } from "@/contexts/scramble";
-import { usePuzzles } from "@/hooks/use-puzzles";
 import { cn } from "@/lib/utils";
 
 const NAV_ITEMS = [
-  { href: "/solves", label: "Solves", icon: LeftToRightListDashIcon },
-  { href: "/", label: "Timer", icon: Timer02Icon },
-  { href: "/statistics", label: "Statistics", icon: Chart01Icon },
+  { href: "/trainer/solves", label: "Solves", icon: LeftToRightListDashIcon },
+  { href: "/trainer", label: "Timer", icon: Timer01Icon },
+  { href: "/trainer/stats", label: "Statistics", icon: Chart01Icon },
   {
     href: "/configuration",
     label: "Configuration",
@@ -39,31 +24,15 @@ const NAV_ITEMS = [
   },
 ] as const;
 
-interface FloatingNavProps {
+interface TrainerFloatingNavProps {
   hidden?: boolean;
 }
 
-export function FloatingNav({ hidden }: FloatingNavProps) {
+export function TrainerFloatingNav({ hidden }: TrainerFloatingNavProps) {
   const matchRoute = useMatchRoute();
-  const isHome = !!matchRoute({ to: "/", fuzzy: false });
-
-  const { generateNewScramble } = useScramble();
 
   return (
     <>
-      <AnimatePresence>
-        {isHome && !hidden && (
-          <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.9 }}
-            transition={{ duration: 0.25, ease: "easeOut" }}
-            className="fixed left-6 top-6 z-50"
-          >
-            <PuzzleSelector />
-          </motion.div>
-        )}
-      </AnimatePresence>
       <nav className="fixed bottom-6 left-1/2 z-50 -translate-x-1/2">
         <AnimatePresence>
           {!hidden && (
@@ -107,7 +76,7 @@ export function FloatingNav({ hidden }: FloatingNavProps) {
         </AnimatePresence>
       </nav>
       <AnimatePresence>
-        {isHome && !hidden && (
+        {!hidden && (
           <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
@@ -125,27 +94,18 @@ export function FloatingNav({ hidden }: FloatingNavProps) {
                 className="size-5 group-hover/button:-rotate-180 group-active/button:scale-0.9 duration-400"
               />
             </LinkButton>
+
             <LinkButton
-              href="/trainer"
+              href="/"
               size="icon-lg"
               className="group/button rounded-full"
-              title="Switch to Trainer"
+              title="Switch to Timer"
             >
               <HugeiconsIcon
-                icon={GitForkIcon}
+                icon={Timer02Icon}
                 className="size-5 group-hover/button:scale-110 duration-200"
               />
             </LinkButton>
-            <Button
-              size="icon-lg"
-              onClick={() => generateNewScramble()}
-              className="group/button rounded-full"
-            >
-              <HugeiconsIcon
-                icon={RotateClockwiseIcon}
-                className="size-5 group-hover/button:-rotate-180 duration-400"
-              />
-            </Button>
           </motion.div>
         )}
       </AnimatePresence>
@@ -175,7 +135,7 @@ function NavItem({
       <AnimatePresence>
         {isActive && (
           <motion.div
-            layoutId="activeNav"
+            layoutId="activeNavTrainer"
             className="absolute inset-0 rounded-full bg-accent/10"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -192,51 +152,5 @@ function NavItem({
         )}
       />
     </Link>
-  );
-}
-
-function PuzzleSelector() {
-  const { currentPuzzle, puzzleList, switchPuzzle } = usePuzzles();
-
-  return (
-    <DropdownMenu>
-      <DropdownMenuTrigger
-        size="lg"
-        className="rounded-full text-secondary-foreground hover:text-foreground"
-      >
-        <PuzzleIcon puzzleType={currentPuzzle.type} size={20} />
-        <span className="font-semibold">{currentPuzzle.name}</span>
-        <HugeiconsIcon
-          icon={ArrowDown01Icon}
-          className="size-4 text-muted-foreground transition-transform duration-200 group-data-[state=open]:rotate-180"
-        />
-      </DropdownMenuTrigger>
-      <DropdownMenuContent align="start" className="w-56">
-        {puzzleList.map((puzzle) => (
-          <DropdownMenuItem
-            key={puzzle.id}
-            onClick={() => switchPuzzle(puzzle.id)}
-            className="justify-between"
-          >
-            <div className="flex items-center gap-2">
-              <PuzzleIcon puzzleType={puzzle.type} size={16} />
-              <span>{puzzle.name}</span>
-            </div>
-            <HugeiconsIcon
-              icon={Tick02Icon}
-              className={cn(
-                "size-4.5 text-accent shrink-0",
-                puzzle.id !== currentPuzzle.id && "invisible",
-              )}
-            />
-          </DropdownMenuItem>
-        ))}
-        <DropdownMenuSeparator />
-        <DropdownMenuItem render={<Link to="/puzzles/new" />}>
-          <HugeiconsIcon icon={Add01Icon} />
-          Create New Puzzle
-        </DropdownMenuItem>
-      </DropdownMenuContent>
-    </DropdownMenu>
   );
 }

@@ -1,52 +1,21 @@
-// import Dexie, { type EntityTable } from "dexie";
-// import type { Solve } from "@/types/puzzles";
-
-// class CubitDatabase extends Dexie {
-//   solves!: EntityTable<Solve, "id">;
-
-//   constructor() {
-//     super("cubit-db");
-
-//     this.version(1).stores({
-//       solves: "id, puzzleId, createdAt, [puzzleId+createdAt]",
-//     });
-//   }
-// }
-
-// const isBrowser = typeof window !== "undefined";
-
-// export const db = isBrowser ? new CubitDatabase() : ({} as CubitDatabase);
+import Dexie, { type EntityTable } from "dexie";
 
 import type { Solve } from "@/types/puzzles";
+import type { TrainerSolve } from "@/types/trainer";
 
-// Define the type but don't import Dexie at top level yet
-let db: import("dexie").Dexie & {
-  solves: import("dexie").EntityTable<Solve, "id">;
-};
+class CubitDatabase extends Dexie {
+  solves!: EntityTable<Solve, "id">;
+  trainerSolves!: EntityTable<TrainerSolve, "id">;
 
-// Only initialize in browser
-if (typeof window !== "undefined") {
-  const { Dexie } = await import("dexie");
+  constructor() {
+    super("cubit-db");
 
-  class CubitDatabase extends Dexie {
-    solves!: import("dexie").EntityTable<Solve, "id">;
-
-    constructor() {
-      super("cubit-db");
-      this.version(1).stores({
-        solves: "id, puzzleId, createdAt, [puzzleId+createdAt]",
-      });
-    }
+    this.version(1).stores({
+      solves: "id, puzzleId, createdAt, [puzzleId+createdAt]",
+      trainerSolves:
+        "id, puzzleId, puzzleType, algSetId, groupId, caseId, createdAt, [puzzleId+createdAt]",
+    });
   }
-
-  db = new CubitDatabase();
-} else {
-  // Provide a mock for SSR that throws helpful errors if accidentally used
-  db = new Proxy({} as typeof db, {
-    get() {
-      throw new Error("Database accessed during SSR - this should not happen");
-    },
-  });
 }
 
-export { db };
+export const db = new CubitDatabase();

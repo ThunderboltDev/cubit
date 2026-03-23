@@ -1,5 +1,4 @@
-import type { Puzzle } from "@/types/puzzles";
-import type { DisplayStatsConfig } from "@/types/stats";
+import type { Puzzle, PuzzleType } from "@/types/puzzles";
 
 export const PUZZLE_TYPES = [
   "222",
@@ -26,53 +25,6 @@ export const PUZZLE_TYPES = [
   "redi_cube",
   "baby_fto",
 ] as const;
-
-export const DEFAULT_DISPLAY_STATS: DisplayStatsConfig = {
-  style: "cards",
-  orientation: "horizontal",
-  stats: [
-    { type: "best", n: Infinity },
-    { type: "average", n: 5 },
-    { type: "average", n: 12 },
-    { type: "average", n: 100 },
-    { type: "mean", n: Infinity },
-  ],
-};
-
-export const DEFAULT_PUZZLE: Puzzle = {
-  id: "default-puzzle",
-  name: "3x3",
-  type: "333",
-  trimPercentage: 5,
-  inspectionEnabled: true,
-  inspectionDuration: 15,
-  multiphaseEnabled: false,
-  multiphaseCount: 0,
-  inputMethod: "timer",
-  scramblePreview: true,
-  scramblePreviewVisualization: "3D",
-  displayStats: DEFAULT_DISPLAY_STATS,
-};
-
-export type ChartType =
-  | "solves"
-  | "average"
-  | "mean"
-  | "consistency"
-  | "inspection"
-  | "multiphase";
-
-export type ChartConfig = {
-  id: string;
-  type: ChartType;
-  n: number;
-  phase?: number;
-};
-
-export const DEFAULT_CHART_CONFIG: ChartConfig[] = [
-  { id: "default-solves", type: "solves", n: 100 },
-  { id: "default-average", type: "average", n: 5 },
-];
 
 export const WCA_PRESETS: Partial<Puzzle>[] = [
   {
@@ -188,3 +140,29 @@ export const PUZZLE_LABELS = {
   "redi_cube": "Redi Cube",
   "baby_fto": "Baby FTO",
 } as const satisfies Record<(typeof PUZZLE_TYPES)[number], string>;
+
+export const PUZZLE_METHODS = {
+  "222": ["Beginner", "Advanced"],
+  "333": ["CFOP", "ROUX", "ZBLL", "ZZ", "Petrus"],
+  "333oh": ["CFOP", "ROUX", "ZZ"],
+  "333ft": ["CFOP", "ROUX"],
+  "333fm": ["CFOP", "ROUX"],
+  "333bf": ["3-style", "Orozco", "OP", "M2", "EKA"],
+  "333mbf": ["3-style", "OP", "M2"],
+  "444": ["Yau", "Hoya", "Reduction"],
+  "444bf": ["3-style", "OP", "Orozco"],
+  "555": ["Yau", "Reduction"],
+  "555bf": ["3-style", "OP", "Orozco"],
+  "666": ["Reduction"],
+  "777": ["Reduction"],
+  "clock": ["none"],
+  "minx": ["Beginner", "Advanced"],
+  "pyram": ["Beginner", "Advanced"],
+  "skewb": ["Beginner", "Advanced"],
+  "sq1": ["Beginner", "Advanced"],
+  "fto": ["none"],
+  "kilominx": ["none"],
+  "master_tetraminx": ["none"],
+  "redi_cube": ["none"],
+  "baby_fto": ["none"],
+} as const satisfies Record<PuzzleType, readonly string[]>;

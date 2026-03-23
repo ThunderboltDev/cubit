@@ -5,8 +5,9 @@ import { PuzzleIcon } from "@/components/puzzle/icon";
 import { Button } from "@/components/ui/button";
 import { LinkButton } from "@/components/ui/link-button";
 import { Page, PageBody, PageHeader, PageTitle } from "@/components/ui/page";
+import { DEFAULT_DISPLAY_STATS } from "@/data/defaults";
+import { WCA_PRESETS } from "@/data/puzzles";
 import { usePuzzles } from "@/hooks/use-puzzles";
-import { DEFAULT_DISPLAY_STATS, WCA_PRESETS } from "@/lib/constants";
 import type { Puzzle } from "@/types/puzzles";
 
 export const Route = createFileRoute("/puzzles/new")({

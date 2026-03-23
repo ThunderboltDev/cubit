@@ -32,7 +32,7 @@ import {
   SheetCancel,
   SheetFooter,
 } from "@/components/ui/sheet";
-import type { ChartConfig, ChartType } from "@/lib/constants";
+import type { ChartConfig, ChartType } from "@/data/defaults";
 
 interface ChartEditorProps {
   initialConfig: ChartConfig;

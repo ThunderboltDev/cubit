@@ -20,7 +20,7 @@ import {
 } from "@/components/ui/sheet";
 import { Slider } from "@/components/ui/slider";
 import { Switch } from "@/components/ui/switch";
-import { PUZZLE_TYPES } from "@/lib/constants";
+import { PUZZLE_TYPES } from "@/data/puzzles";
 import { db } from "@/lib/db";
 import { generateBulkSolves } from "@/lib/generate-solves";
 import { cn } from "@/lib/utils";
@@ -152,6 +152,8 @@ function DevToolsSheet() {
             { type: "average", n: 12 },
           ],
         },
+        method: "Beginner",
+        lettering: undefined,
       });
 
       const actualPuzzleId =
