@@ -1,6 +1,7 @@
 import { Monitor, MoonIcon, SunIcon } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { createFileRoute } from "@tanstack/react-router";
+import { useDevToolsTapActivator } from "@/components/app/devtools";
 import { SettingsItem, SettingsSection } from "@/components/timer/settings";
 import {
   Page,
@@ -30,14 +31,15 @@ const SAMPLE_TIME_MS = 65432;
 
 function SettingsRoute() {
   const { settings, updateSettings } = useSettings();
+  const handleTap = useDevToolsTapActivator();
 
   return (
     <Page className="wrapper-md!" showNavHeader>
       <PageHeader>
-        <PageTitle>Settings</PageTitle>
+        <PageTitle onClick={handleTap}>Settings</PageTitle>
         <PageDescription>Manage your preferences</PageDescription>
       </PageHeader>
-      <PageBody className="space-y-8">
+      <PageBody className="space-y-10">
         <SettingsSection title="Appearance">
           <SettingsItem label="Theme">
             <Select
@@ -100,9 +102,9 @@ function SettingsRoute() {
               marks={String}
               onValueChange={(value) =>
                 updateSettings({
-                  timerPrecision: (Array.isArray(value)
-                    ? value[0]
-                    : value) as TimerPrecision,
+                  timerPrecision: (Array.isArray(value) ?
+                    value[0]
+                  : value) as TimerPrecision,
                 })
               }
               withBadge={false}

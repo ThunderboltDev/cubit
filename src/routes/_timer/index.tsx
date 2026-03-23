@@ -33,6 +33,8 @@ export const Route = createFileRoute("/_timer/")({
   component: TimerPage,
 });
 
+let hasTimerPageAnimated = false;
+
 function TimerPage() {
   const {
     currentPuzzle,
@@ -61,8 +63,8 @@ function TimerPage() {
         className="absolute inset-0 z-0 flex items-center justify-center bg-background"
         onMouseDown={handlePressIn}
         onMouseUp={handlePressOut}
-        onTouchStart={handlePressIn}
-        onTouchEnd={handlePressOut}
+        onTouchStart={timerState !== "running" ? handlePressIn : undefined}
+        onTouchEnd={timerState !== "running" ? handlePressOut : undefined}
         aria-label="Timer area. Press and hold to start, release to stop."
       >
         <div className="flex flex-col items-center">
@@ -79,14 +81,16 @@ function TimerPage() {
             {getDisplayText(settings.timerPrecision)}
           </motion.span>
           <motion.span
-            initial={{ opacity: 0, y: 10 }}
+            initial={hasTimerPageAnimated ? false : { opacity: 0, y: 10 }}
             animate={{
               opacity:
-                timerState === "idle" ||
-                timerState === "inspection" ||
-                (timerState === "running" && currentPuzzle.multiphaseEnabled)
-                  ? 0.5
-                  : 0,
+                (
+                  timerState === "idle" ||
+                  timerState === "inspection" ||
+                  (timerState === "running" && currentPuzzle.multiphaseEnabled)
+                ) ?
+                  0.5
+                : 0,
               y: 0,
             }}
             className="mt-3 h-7 text-xs uppercase tracking-widest"
@@ -95,6 +99,7 @@ function TimerPage() {
           </motion.span>
         </div>
       </button>
+
       <motion.div
         initial={false}
         animate={{ opacity: controlsVisible ? 1 : 0 }}
@@ -102,7 +107,7 @@ function TimerPage() {
         className="pointer-events-none absolute inset-0 z-10 flex flex-col"
       >
         <motion.div
-          initial={{ opacity: 0, y: -20 }}
+          initial={hasTimerPageAnimated ? false : { opacity: 0, y: -20 }}
           animate={{
             opacity: controlsVisible ? 1 : 0,
             y: controlsVisible ? 0 : -20,
@@ -110,9 +115,9 @@ function TimerPage() {
           transition={{ duration: 0.3, delay: 0.1 }}
           className="pointer-events-auto flex flex-col gap-3 p-4 pb-0 pt-20 md:pt-4"
         >
-          <Button
-            variant="ghost"
-            className="h-auto min-h-[52px] w-full whitespace-normal max-w-xl mx-auto"
+          <button
+            type="button"
+            className="h-auto min-h-[52px] w-full whitespace-normal max-w-xl mx-auto cursor-pointer hover:text-secondary-foreground active:brightness-85"
             onClick={() => setIsScrambleDialogOpen(true)}
           >
             <motion.span
@@ -124,7 +129,7 @@ function TimerPage() {
             >
               {scramble}
             </motion.span>
-          </Button>
+          </button>
           <div
             className={cn(
               "max-h-[80px] md:max-h-[120px] items-center justify-center transition-opacity",
@@ -165,7 +170,7 @@ function TimerPage() {
                     }
                   >
                     <HugeiconsIcon
-                      className="group-hover/button:scale-95 group-hover/button:rotate-12"
+                      className="group-hover/button:scale-95 group-hover/button:rotate-12 duration-400"
                       icon={Flag02Icon}
                     />
                   </Button>
@@ -196,7 +201,7 @@ function TimerPage() {
                     }
                   >
                     <HugeiconsIcon
-                      className="group-hover/button:scale-95 group-hover/button:rotate-180"
+                      className="group-hover/button:scale-95 group-hover/button:rotate-180 duration-400"
                       icon={UnavailableIcon}
                     />
                   </Button>
@@ -220,7 +225,7 @@ function TimerPage() {
                     onClick={() => setIsDeleteDialogOpen(true)}
                   >
                     <HugeiconsIcon
-                      className="group-hover/button:scale-95 group-hover/button:rotate-180"
+                      className="group-hover/button:scale-95 group-hover/button:rotate-180 duration-400"
                       icon={Delete02Icon}
                     />
                   </Button>
@@ -239,12 +244,19 @@ function TimerPage() {
             {stats?.stats.map((stat, index) => (
               <motion.div
                 key={stat.type + stat.n}
-                initial={{ opacity: 0, y: 20 }}
+                initial={hasTimerPageAnimated ? false : { opacity: 0, y: 20 }}
                 animate={{
                   opacity: controlsVisible ? 1 : 0,
                   y: controlsVisible ? 0 : 20,
                 }}
                 transition={{ delay: 0.1 + index * 0.05, duration: 0.3 }}
+                onAnimationComplete={
+                  index === stats.stats.length - 1 ?
+                    () => {
+                      hasTimerPageAnimated = true;
+                    }
+                  : undefined
+                }
               >
                 <StatCard
                   stat={stat}

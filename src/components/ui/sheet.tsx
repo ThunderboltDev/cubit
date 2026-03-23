@@ -9,14 +9,11 @@ function Sheet({ ...props }: SheetPrimitive.Root.Props) {
   return <SheetPrimitive.Root data-slot="sheet" {...props} />;
 }
 
-function SheetTrigger({
-  variant = "outline",
-  ...props
-}: ComponentProps<typeof Button>) {
+function SheetTrigger({ ...props }: ComponentProps<typeof Button>) {
   return (
     <SheetPrimitive.Trigger
       data-slot="sheet-trigger"
-      render={<Button variant={variant} {...props} />}
+      render={<Button {...props} />}
     />
   );
 }
@@ -34,7 +31,10 @@ function SheetOverlay({ className, ...props }: SheetPrimitive.Backdrop.Props) {
     <SheetPrimitive.Backdrop
       data-slot="sheet-overlay"
       className={cn(
-        "data-open:animate-in data-closed:animate-out data-closed:fade-out-0 data-open:fade-in-0 bg-black/10 duration-250 ease-in-out data-ending-style:opacity-0 data-starting-style:opacity-0 supports-backdrop-filter:backdrop-blur-xs fixed inset-0 z-50",
+        "fixed inset-0 isolate z-50",
+        "bg-black/40 duration-200",
+        "data-open:animate-in data-open:fade-in-0",
+        "data-closed:animate-out data-closed:fade-out-0",
         className,
       )}
       {...props}
@@ -61,32 +61,35 @@ function SheetContent({
         data-slot="sheet-content"
         data-side={side}
         className={cn(
-          "bg-background data-open:animate-in data-closed:animate-out data-closed:fade-out-0 data-open:fade-in-0 fixed z-50 flex flex-col gap-4 bg-clip-padding text-sm shadow-lg transition duration-250 ease-in-out border-border p-2",
-          responsive
-            ? [
-                "inset-x-0 bottom-0 h-auto border-t",
-                "md:inset-y-0 md:bottom-auto md:h-full! md:w-3/4 md:border-t-0",
-                side === "right"
-                  ? "md:right-0 md:left-auto md:border-l md:data-closed:slide-out-to-right-10 md:data-open:slide-in-from-right-10"
-                  : "",
-                side === "left"
-                  ? "md:left-0 md:right-auto md:border-r md:data-closed:slide-out-to-left-10 md:data-open:slide-in-from-left-10"
-                  : "",
-                "md:sm:max-w-sm",
-                "data-closed:slide-out-to-bottom-10 data-open:slide-in-from-bottom-10",
-                "md:data-closed:slide-out-to-bottom-0 md:data-open:slide-in-from-bottom-0",
-              ]
-            : [
-                side === "right" &&
-                  "inset-y-0 right-0 h-dvh w-3/4 border-l data-[side=right]:data-closed:slide-out-to-right-10 data-[side=right]:data-open:slide-in-from-right-10 sm:max-w-sm",
-                side === "left" &&
-                  "inset-y-0 left-0 h-dvh w-3/4 border-r data-[side=left]:data-closed:slide-out-to-left-10 data-[side=left]:data-open:slide-in-from-left-10 sm:max-w-sm",
-                side === "top" &&
-                  "inset-x-0 top-0 h-auto border-b data-[side=top]:data-closed:slide-out-to-top-10 data-[side=top]:data-open:slide-in-from-top-10",
-                side === "bottom" &&
-                  "inset-x-0 bottom-0 h-auto border-t data-[side=bottom]:data-closed:slide-out-to-bottom-10 data-[side=bottom]:data-open:slide-in-from-bottom-10",
-              ],
-
+          "fixed z-50 flex flex-col gap-4 p-2",
+          "bg-background duration-200 bg-clip-padding outline-none text-sm",
+          "shadow-lg inset-shadow-sm shadows drop-shadow-lg",
+          "data-open:animate-in data-open:fade-in-0",
+          "data-closed:animate-out data-closed:fade-out-0",
+          responsive ?
+            [
+              "inset-x-0 bottom-0 h-auto rounded-t-md",
+              "md:inset-y-0 md:bottom-auto md:h-full! md:w-3/4 md:border-t-0",
+              side === "right" ?
+                "md:right-0 md:left-auto md:rounded-none md:rounded-l-lg md:data-closed:slide-out-to-right-10 md:data-open:slide-in-from-right-10"
+              : "",
+              side === "left" ?
+                "md:left-0 md:right-auto md:rounded-none md:rounded-r-lg md:data-closed:slide-out-to-left-10 md:data-open:slide-in-from-left-10"
+              : "",
+              "md:sm:max-w-sm",
+              "data-closed:slide-out-to-bottom-10 data-open:slide-in-from-bottom-10",
+              "md:data-closed:slide-out-to-bottom-0 md:data-open:slide-in-from-bottom-0",
+            ]
+          : [
+              side === "right" &&
+                "inset-y-0 right-0 h-dvh w-3/4 border-l data-[side=right]:data-closed:slide-out-to-right-10 data-[side=right]:data-open:slide-in-from-right-10 sm:max-w-sm",
+              side === "left" &&
+                "inset-y-0 left-0 h-dvh w-3/4 border-r data-[side=left]:data-closed:slide-out-to-left-10 data-[side=left]:data-open:slide-in-from-left-10 sm:max-w-sm",
+              side === "top" &&
+                "inset-x-0 top-0 h-auto border-b data-[side=top]:data-closed:slide-out-to-top-10 data-[side=top]:data-open:slide-in-from-top-10",
+              side === "bottom" &&
+                "inset-x-0 bottom-0 h-auto border-t data-[side=bottom]:data-closed:slide-out-to-bottom-10 data-[side=bottom]:data-open:slide-in-from-bottom-10",
+            ],
           className,
         )}
         {...props}
@@ -98,8 +101,8 @@ function SheetContent({
             render={
               <Button
                 variant="ghost"
-                className="absolute top-3 right-3 size-8"
                 size="icon"
+                className="absolute top-3 right-3 size-8"
               />
             }
           >
@@ -136,7 +139,10 @@ function SheetFooter({ className, ...props }: ComponentProps<"div">) {
   return (
     <div
       data-slot="sheet-footer"
-      className={cn("gap-2 p-4 mt-auto flex flex-row justify-end", className)}
+      className={cn(
+        "gap-3 md:gap-2 p-4 mt-auto flex flex-row justify-end",
+        className,
+      )}
       {...props}
     />
   );
@@ -182,7 +188,7 @@ function SheetAction({
 
 function SheetCancel({
   className,
-  variant = "secondary",
+  variant = "default",
   size = "responsive",
   children,
   ...props

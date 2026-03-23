@@ -128,7 +128,7 @@ export function SelectTrigger({
       render={
         <Button
           className={cn(
-            "text-secondary-foreground text-responsive! inline-flex gap-2 justify-between items-center px-6 min-w-0 whitespace-normal",
+            "text-foreground text-responsive! inline-flex gap-2 justify-between items-center px-6 min-w-0 whitespace-normal",
             className,
           )}
         />
@@ -190,13 +190,17 @@ export function SelectItem({
   return (
     <DropdownMenuItem
       {...props}
-      className={cn("flex justify-between", className)}
+      className={cn("justify-between w-full", className)}
       onClick={() => setSelected({ value, label: children })}
     >
       <span className="inline-flex items-center gap-2">{children}</span>
-      {selectedValue === value && (
-        <HugeiconsIcon icon={Tick02Icon} className="size-5 text-accent" />
-      )}
+      <HugeiconsIcon
+        icon={Tick02Icon}
+        className={cn(
+          "size-5 text-accent shrink-0",
+          selectedValue !== value && "invisible",
+        )}
+      />
     </DropdownMenuItem>
   );
 }

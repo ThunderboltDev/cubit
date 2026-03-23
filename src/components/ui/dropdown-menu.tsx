@@ -21,11 +21,7 @@ function DropdownMenuTrigger({
     <MenuPrimitive.Trigger
       data-slot="dropdown-menu-trigger"
       render={
-        <Button
-          variant="outline"
-          className={cn("justify-between", className)}
-          {...props}
-        />
+        <Button className={cn("justify-between", className)} {...props} />
       }
     />
   );
@@ -55,7 +51,7 @@ function DropdownMenuContent({
         <MenuPrimitive.Popup
           data-slot="dropdown-menu-content"
           className={cn(
-            "border border-border data-open:animate-in data-closed:animate-out data-closed:fade-out-0 data-open:fade-in-0 data-closed:zoom-out-95 data-open:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 bg-secondary text-secondary-foreground rounded-lg p-1 shadow-lg duration-250 ease-in-out z-50 max-h-(--available-height) w-(--anchor-width) origin-(--transform-origin) overflow-x-hidden overflow-y-auto scrollbar-2 outline-none data-closed:overflow-hidden data-focus-visible:outline-none",
+            "flex flex-col bg-muted shadow-md inset-shadow-xs shadows-muted drop-shadow-lg data-open:animate-in data-closed:animate-out data-closed:fade-out-0 data-open:fade-in-0 data-closed:zoom-out-95 data-open:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 rounded-lg p-1 duration-200 z-50 max-h-(--available-height) w-(--anchor-width) origin-(--transform-origin) overflow-x-hidden overflow-y-auto scrollbar-2 outline-none data-closed:overflow-hidden data-focus-visible:outline-none",
             className,
           )}
           {...props}
@@ -91,23 +87,22 @@ function DropdownMenuLabel({
 
 function DropdownMenuItem({
   className,
-  inset,
-  variant = "default",
+  variant = "ghost",
   ...props
-}: MenuPrimitive.Item.Props & {
-  inset?: boolean;
-  variant?: "default" | "danger";
-}) {
+}: ComponentProps<typeof Button>) {
   return (
     <MenuPrimitive.Item
       data-slot="dropdown-menu-item"
-      data-inset={inset}
-      data-variant={variant}
-      className={cn(
-        "focus:bg-muted hover:bg-muted focus:text-foreground cursor-pointer transition-all duration-200 ease-in-out data-[variant=danger]:text-danger data-[variant=danger]:focus:bg-danger/10 dark:data-[variant=danger]:focus:bg-danger/20 data-[variant=danger]:focus:text-danger data-[variant=danger]:*:[svg]:text-danger not-data-[variant=danger]:focus:**:text-secondary-foreground gap-2.5 rounded-md px-3 py-2 text-sm [&_svg:not([class*='size-'])]:size-4 group/dropdown-menu-item relative flex items-center outline-hidden select-none data-disabled:opacity-50 data-inset:pl-8 [&_svg]:pointer-events-none data-disabled:cursor-not-allowed [&_svg]:shrink-0",
-        className,
-      )}
-      {...props}
+      render={
+        <Button
+          variant={variant}
+          className={cn(
+            "text-foreground hover:bg-accent/10 focus:bg-accent/10 justify-start",
+            className,
+          )}
+          {...props}
+        />
+      }
     />
   );
 }
@@ -156,7 +151,7 @@ function DropdownMenuSubContent({
     <DropdownMenuContent
       data-slot="dropdown-menu-sub-content"
       className={cn(
-        "data-open:animate-in data-closed:animate-out data-closed:fade-out-0 data-open:fade-in-0 data-closed:zoom-out-95 data-open:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 bg-secondary text-secondary-foreground min-w-36 rounded-lg p-1 shadow-lg duration-250 ease-in-out w-auto",
+        "data-open:animate-in data-closed:animate-out data-closed:fade-out-0 data-open:fade-in-0 data-closed:zoom-out-95 data-open:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 bg-secondary text-secondary-foreground min-w-36 rounded-lg p-1 shadow-lg duration-200 w-auto",
         className,
       )}
       align={align}

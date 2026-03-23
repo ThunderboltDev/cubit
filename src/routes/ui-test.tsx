@@ -11,7 +11,6 @@ import { type ReactNode, useState } from "react";
 import {
   AlertDialog,
   AlertDialogAction,
-  AlertDialogBody,
   AlertDialogCancel,
   AlertDialogContent,
   AlertDialogDescription,
@@ -76,9 +75,7 @@ export const Route = createFileRoute("/ui-test")({
 const buttonSizes = ["sm", "default", "lg"] as const;
 const buttonVariants = [
   "default",
-  "secondary",
   "ghost",
-  "outline",
   "accent",
   "success",
   "danger",
@@ -88,7 +85,6 @@ const buttonVariants = [
 const badgeSizes = ["sm", "default", "lg"] as const;
 const badgeVariants = [
   "default",
-  "secondary",
   "accent",
   "success",
   "danger",
@@ -268,10 +264,7 @@ function UITestPage() {
             </FieldDescription>
             <FieldGroup>
               <FieldItem orientation="horizontal">
-                <FieldLabel
-                  htmlFor="checkout-shipping-address"
-                  className="font-normal"
-                >
+                <FieldLabel htmlFor="checkout-shipping-address">
                   Same as shipping address
                 </FieldLabel>
                 <Switch
@@ -358,11 +351,6 @@ function UITestPage() {
                         delete your account.
                       </AlertDialogDescription>
                     </AlertDialogHeader>
-                    <AlertDialogBody>
-                      <p className="text-sm text-muted-foreground">
-                        All your data will be removed from our servers.
-                      </p>
-                    </AlertDialogBody>
                     <AlertDialogFooter>
                       <AlertDialogCancel />
                       <AlertDialogAction variant="danger">

@@ -9,8 +9,8 @@ const item = {
 
 function StatItem({ label, value }: { label: string; value: string }) {
   return (
-    <Card className="group relative overflow-hidden border border-border transition-all">
-      <div className="absolute inset-x-0 bottom-0 h-1 origin-left scale-x-0 bg-accent transition-transform group-hover:scale-x-100" />
+    <Card className="group relative overflow-hidden">
+      <div className="absolute inset-x-0 bottom-0 h-1 origin-left scale-x-0 bg-accent transition-transform duration-200 group-hover:scale-x-100 blur-md" />
       <CardBody className="flex flex-col gap-1 p-4">
         <span className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
           {label}

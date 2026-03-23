@@ -2,12 +2,13 @@ import {
   Copy01Icon,
   Delete02Icon,
   Flag02Icon,
+  Tick,
   UnavailableIcon,
 } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { createFileRoute } from "@tanstack/react-router";
 import { motion } from "framer-motion";
-import { useMemo, useState } from "react";
+import { type ComponentProps, type ReactNode, useMemo, useState } from "react";
 import { useCopyToClipboard } from "react-use";
 import {
   AlertDialog,
@@ -44,10 +45,10 @@ import {
   SheetTitle,
 } from "@/components/ui/sheet";
 import { usePuzzles } from "@/hooks/use-puzzles";
-import { useSettings } from "@/hooks/use-settings";
 import { useSolves } from "@/hooks/use-solves";
-import { formatTime } from "@/lib/format-time";
+import { formatTimeShort } from "@/lib/format-time";
 import { getEffectiveTime } from "@/lib/stats";
+import { cn } from "@/lib/utils";
 import type { Penalty, Solve } from "@/types/puzzles";
 
 export const Route = createFileRoute("/_timer/solves")({
@@ -57,25 +58,26 @@ export const Route = createFileRoute("/_timer/solves")({
 type PenaltyFilter = "all" | Penalty;
 type SortOption = "newest" | "oldest" | "best" | "worst";
 
-const container = {
+let hasPageAnimated = false;
+
+const containerVariants = {
   hidden: { opacity: 0 },
   show: {
     opacity: 1,
     transition: {
-      staggerChildren: 0.05,
-      delayChildren: 0.1,
+      staggerChildren: 0.04,
+      delayChildren: 0.05,
     },
   },
 };
 
-const item = {
-  hidden: { opacity: 0, scale: 0.97, y: 12 },
-  show: { opacity: 1, scale: 1, y: 0 },
+const itemVariants = {
+  hidden: { opacity: 0, y: 8 },
+  show: { opacity: 1, y: 0 },
 };
 
 function SolvesPage() {
   const { currentPuzzle } = usePuzzles();
-  const { settings } = useSettings();
   const { solves, updatePenalty, deleteSolve } = useSolves({
     puzzleId: currentPuzzle.id,
   });
@@ -128,15 +130,6 @@ function SolvesPage() {
     return result;
   }, [solves, penaltyFilter, sortOption]);
 
-  console.log("SolvesPage render", {
-    currentPuzzleId: currentPuzzle.id,
-    solvesCount: solves.length,
-    solvesSample: solves.slice(0, 2),
-    filteredCount: filteredSolves.length,
-    penaltyFilter,
-    sortOption,
-  });
-
   const handleCopyScramble = (scramble: string) => {
     copyToClipboard(scramble);
     setCopyFeedback(true);
@@ -155,32 +148,36 @@ function SolvesPage() {
   const formatSolveTime = (solve: Solve) => {
     if (solve.penalty === "DNF") return "DNF";
     const time = getEffectiveTime(solve);
-    const display = formatTime(
-      time,
-      settings.timerPrecision,
-      settings.timeFormat,
-    );
+    const display = formatTimeShort(time);
     return solve.penalty === "+2" ? `${display}+` : display;
   };
 
-  const formatDate = (timestamp: number) => {
+  const formatDate = (timestamp: number): string => {
     const diff = Date.now() - timestamp;
     const minutes = Math.floor(diff / 60000);
+
     if (minutes < 1) return "Just now";
     if (minutes < 60) return `${minutes}m ago`;
+
     const hours = Math.floor(minutes / 60);
     if (hours < 24) return `${hours}h ago`;
+
     const days = Math.floor(hours / 24);
     if (days < 7) return `${days}d ago`;
-    return new Date(timestamp).toLocaleDateString();
+
+    return new Intl.DateTimeFormat(undefined, {
+      dateStyle: "medium",
+    }).format(timestamp);
   };
 
   return (
     <Page>
       <PageHeader className="space-y-4">
-        <PageTitle>Solves</PageTitle>
-        <PageDescription>{solves.length} solves</PageDescription>
-        <div className="flex flex-wrap items-center gap-3">
+        <div>
+          <PageTitle>Solves</PageTitle>
+          <PageDescription>{solves.length} total solves</PageDescription>
+        </div>
+        <div className="flex flex-wrap items-center gap-2">
           <Select
             value={penaltyFilter}
             onValueChange={(value) => setPenaltyFilter(value as PenaltyFilter)}
@@ -214,49 +211,52 @@ function SolvesPage() {
       </PageHeader>
 
       <PageBody>
-        {filteredSolves.length === 0 ? (
+        {filteredSolves.length === 0 ?
           <motion.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.4 }}
+            onAnimationComplete={() => (hasPageAnimated = true)}
             className="flex h-40 items-center justify-center text-muted-foreground"
           >
-            {solves.length === 0
-              ? "No solves yet. Start timing!"
-              : "No solves match this filter."}
+            {solves.length === 0 ?
+              "No solves yet. Start timing!"
+            : "No solves match this filter."}
           </motion.div>
-        ) : (
-          <motion.div
+        : <motion.div
             key={`${penaltyFilter}-${sortOption}`}
-            variants={container}
-            initial="hidden"
+            variants={containerVariants}
+            initial={hasPageAnimated ? "show" : "hidden"}
             animate="show"
-            className="space-y-1"
+            className="flex flex-col gap-1"
+            onAnimationComplete={() => (hasPageAnimated = true)}
           >
             {filteredSolves.map((solve) => {
-              const solveTimeTextClass =
-                solve.penalty === "DNF"
-                  ? "text-danger"
-                  : solve.penalty === "+2"
-                    ? "text-warning"
-                    : "text-foreground";
-
               return (
-                <motion.div key={solve.id} variants={item}>
+                <motion.div key={solve.id} variants={itemVariants}>
                   <Button
                     variant="ghost"
-                    className="group flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left transition-colors hover:bg-secondary hover:shadow-sm"
                     onClick={() => setSelectedSolve(solve)}
+                    className="group hover:bg-muted w-full flex items-center gap-3 text-left"
                   >
                     <span
-                      className={`min-w-20 font-mono text-base font-semibold ${solveTimeTextClass}`}
+                      className={cn(
+                        "min-w-[7ch] shrink-0 font-mono text-[15px] font-semibold",
+                        {
+                          "text-foreground": solve.penalty === "OK",
+                          "text-warning": solve.penalty === "+2",
+                          "text-danger": solve.penalty === "DNF",
+                        },
+                      )}
                     >
                       {formatSolveTime(solve)}
                     </span>
-                    <span className="flex-1 truncate text-xs font-mono text-muted-foreground">
+
+                    <span className="min-w-0 flex-1 truncate font-mono text-xs text-muted-foreground">
                       {solve.scramble}
                     </span>
-                    <span className="shrink-0 text-xs text-muted-foreground">
+
+                    <span className="shrink-0 text-xs text-muted-foreground/50 font-mono">
                       {formatDate(solve.createdAt)}
                     </span>
                   </Button>
@@ -264,140 +264,134 @@ function SolvesPage() {
               );
             })}
           </motion.div>
-        )}
+        }
       </PageBody>
 
       <Sheet
         open={!!selectedSolve}
         onOpenChange={(open) => !open && setSelectedSolve(null)}
       >
-        <SheetContent side="bottom">
+        <SheetContent>
           {selectedSolve && (
             <>
               <SheetHeader>
-                <SheetTitle>Solve Detail</SheetTitle>
+                <SheetTitle>Solve detail</SheetTitle>
               </SheetHeader>
-              <SheetBody className="space-y-6">
-                <div>
-                  <div
-                    className={`font-mono text-5xl font-black tracking-tighter ${
-                      selectedSolve.penalty === "DNF"
-                        ? "text-danger"
-                        : selectedSolve.penalty === "+2"
-                          ? "text-warning"
-                          : "text-foreground"
-                    }`}
-                  >
-                    {formatSolveTime(selectedSolve)}
-                  </div>
-                  <div className="mt-2 text-sm font-medium text-muted-foreground">
-                    {new Date(selectedSolve.createdAt).toLocaleString()}
+
+              <SheetBody className="gap-0 space-y-0 px-4 pb-2">
+                <div className="flex items-end justify-between pb-5">
+                  <div>
+                    <div
+                      className={cn(
+                        "font-mono text-5xl font-black tracking-tighter leading-none",
+                        selectedSolve.penalty === "DNF" && "text-danger",
+                        selectedSolve.penalty === "+2" && "text-warning",
+                        selectedSolve.penalty === null && "text-foreground",
+                      )}
+                    >
+                      {formatSolveTime(selectedSolve)}
+                    </div>
+                    <div className="mt-1.5 text-sm text-muted-foreground">
+                      {new Date(selectedSolve.createdAt).toLocaleString()}
+                    </div>
                   </div>
                 </div>
 
-                {(selectedSolve.kind === "inspection" ||
-                  selectedSolve.kind === "full") && (
-                  <div className="flex items-center justify-between rounded-lg border border-border bg-secondary/50 p-4">
-                    <span className="text-sm font-medium text-foreground">
-                      Inspection Time
-                    </span>
-                    <span className="font-mono font-semibold text-accent">
-                      {formatTime(selectedSolve.inspectionTime, 1)}s
-                    </span>
-                  </div>
-                )}
+                <div className="h-px w-full bg-border" />
+                <div className="py-4 space-y-3">
+                  {(selectedSolve.kind === "inspection" ||
+                    selectedSolve.kind === "full") && (
+                    <StatRow
+                      label="Inspection"
+                      value={
+                        <span className="font-mono font-semibold text-accent">
+                          {formatTimeShort(selectedSolve.inspectionTime)}
+                        </span>
+                      }
+                    />
+                  )}
+                  <StatRow
+                    label="Raw time"
+                    value={
+                      <span className="font-mono font-semibold">
+                        {formatTimeShort(selectedSolve.time)}
+                      </span>
+                    }
+                  />
+                </div>
 
-                <div className="space-y-2">
+                <div className="h-px w-full bg-border" />
+
+                <div className="py-4 space-y-0">
                   <div className="flex items-center justify-between">
-                    <span className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">
+                    <span className="font-semibold uppercase tracking-widest text-muted-foreground">
                       Scramble
                     </span>
                     <Button
-                      variant="ghost"
                       size="sm"
+                      variant="ghost"
+                      className="hover:text-foreground"
                       onClick={() => handleCopyScramble(selectedSolve.scramble)}
-                      className="h-8 group"
                     >
                       <HugeiconsIcon
                         icon={Copy01Icon}
-                        className="text-muted-foreground transition-colors group-hover:text-foreground"
+                        altIcon={Tick}
+                        showAlt={copyFeedback}
                       />
                       {copyFeedback ? "Copied!" : "Copy"}
                     </Button>
                   </div>
-                  <p className="overflow-x-auto whitespace-pre-wrap rounded-xl border border-border bg-secondary/80 p-4 font-mono text-[13px] leading-relaxed">
+                  <p className="overflow-x-auto whitespace-pre-wrap rounded-lg border border-border bg-inset px-4 py-3 font-mono text-[13px] leading-relaxed text-muted-foreground">
                     {selectedSolve.scramble}
                   </p>
                 </div>
 
-                <div className="space-y-3">
-                  <span className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">
+                <div className="h-px w-full bg-border" />
+
+                <div className="py-4 space-y-0">
+                  <span className="font-semibold uppercase tracking-widest text-muted-foreground">
                     Penalty
                   </span>
-                  <div className="grid grid-cols-3 gap-3">
-                    <Button
-                      className={
-                        selectedSolve.penalty === "OK"
-                          ? ""
-                          : "text-muted-foreground"
+                  <div className="flex rounded-lg bg-inset p-1 gap-1">
+                    <PenaltyPill
+                      label="OK"
+                      active={
+                        selectedSolve.penalty === "OK" ||
+                        selectedSolve.penalty === null
                       }
                       onClick={() => {
                         updatePenalty(selectedSolve.id, "OK");
-                        setSelectedSolve({
-                          ...selectedSolve,
-                          penalty: "OK",
-                        });
+                        setSelectedSolve({ ...selectedSolve, penalty: "OK" });
                       }}
-                    >
-                      No Penalty
-                    </Button>
-                    <Button
-                      variant={
-                        selectedSolve.penalty === "+2" ? "warning" : "default"
-                      }
-                      className={
-                        selectedSolve.penalty !== "+2"
-                          ? "text-muted-foreground"
-                          : ""
-                      }
+                    />
+                    <PenaltyPill
+                      label="+2"
+                      variant="warning"
+                      active={selectedSolve.penalty === "+2"}
+                      icon={Flag02Icon}
                       onClick={() => {
-                        const newPenalty: Penalty =
+                        const next: Penalty =
                           selectedSolve.penalty === "+2" ? "OK" : "+2";
-                        updatePenalty(selectedSolve.id, newPenalty);
-                        setSelectedSolve({
-                          ...selectedSolve,
-                          penalty: newPenalty,
-                        });
+                        updatePenalty(selectedSolve.id, next);
+                        setSelectedSolve({ ...selectedSolve, penalty: next });
                       }}
-                    >
-                      <HugeiconsIcon icon={Flag02Icon} />
-                      +2
-                    </Button>
-                    <Button
-                      variant={
-                        selectedSolve.penalty === "DNF" ? "danger" : "default"
-                      }
-                      className={
-                        selectedSolve.penalty !== "DNF"
-                          ? "text-muted-foreground"
-                          : ""
-                      }
+                    />
+                    <PenaltyPill
+                      label="DNF"
+                      variant="danger"
+                      active={selectedSolve.penalty === "DNF"}
+                      icon={UnavailableIcon}
                       onClick={() => {
-                        const newPenalty: Penalty =
+                        const next: Penalty =
                           selectedSolve.penalty === "DNF" ? "OK" : "DNF";
-                        updatePenalty(selectedSolve.id, newPenalty);
-                        setSelectedSolve({
-                          ...selectedSolve,
-                          penalty: newPenalty,
-                        });
+                        updatePenalty(selectedSolve.id, next);
+                        setSelectedSolve({ ...selectedSolve, penalty: next });
                       }}
-                    >
-                      <HugeiconsIcon icon={UnavailableIcon} />
-                      DNF
-                    </Button>
+                    />
                   </div>
                 </div>
               </SheetBody>
+
               <SheetFooter>
                 <SheetCancel />
                 <Button
@@ -434,5 +428,53 @@ function SolvesPage() {
         </AlertDialogContent>
       </AlertDialog>
     </Page>
+  );
+}
+
+interface StatRowProps {
+  label: string;
+  value: ReactNode;
+}
+
+function StatRow({ label, value }: StatRowProps) {
+  return (
+    <div className="flex items-center justify-between">
+      <span className="text-base text-muted-foreground">{label}</span>
+      <span className="text-base">{value}</span>
+    </div>
+  );
+}
+
+function PenaltyPill({
+  label,
+  active,
+  variant = "default",
+  icon,
+  onClick,
+}: {
+  label: string;
+  active: boolean;
+  variant?: "default" | "warning" | "danger";
+  icon?: ComponentProps<typeof HugeiconsIcon>["icon"];
+  onClick: () => void;
+}) {
+  const activeClasses =
+    variant === "warning" ? "bg-warning text-white shadows-warning"
+    : variant === "danger" ? "bg-danger text-white shadows-danger"
+    : "bg-muted shadows-muted text-foreground";
+
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className={cn(
+        "flex flex-1 items-center justify-center gap-1.5 rounded-md py-2 text-sm font-medium",
+        "transition-all duration-150",
+        active ? activeClasses : "text-muted-foreground hover:text-foreground",
+      )}
+    >
+      {icon && <HugeiconsIcon icon={icon} className="size-4 shrink-0" />}
+      {label}
+    </button>
   );
 }

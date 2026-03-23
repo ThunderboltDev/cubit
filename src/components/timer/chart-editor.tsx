@@ -1,4 +1,4 @@
-import { Delete02Icon } from "@hugeicons/core-free-icons";
+import { Delete02Icon, Plus, Save } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { useState } from "react";
 import {
@@ -32,7 +32,7 @@ import {
   SheetCancel,
   SheetFooter,
 } from "@/components/ui/sheet";
-import type { ChartConfig, ChartType } from "@/lib/constants";
+import type { ChartConfig, ChartType } from "@/data/defaults";
 
 interface ChartEditorProps {
   initialConfig: ChartConfig;
@@ -62,29 +62,36 @@ export function ChartEditor({
       <SheetBody>
         <FieldGroup>
           <FieldItem orientation="horizontal">
-            <FieldLabel>Chart Type</FieldLabel>
-            <Select
-              value={config.type}
-              onValueChange={(v) =>
-                setConfig((prev) => ({ ...prev, type: v as ChartType }))
-              }
-            >
-              <SelectTrigger>
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent align="end">
-                <SelectItem value="solves">Solves</SelectItem>
-                <SelectItem value="average">Average</SelectItem>
-                <SelectItem value="mean">Mean</SelectItem>
-                <SelectItem value="consistency">Consistency (SD)</SelectItem>
-                {puzzleFeatures.inspection && (
-                  <SelectItem value="inspection">Inspection Time</SelectItem>
-                )}
-                {puzzleFeatures.multiphase && (
-                  <SelectItem value="multiphase">Phase Time</SelectItem>
-                )}
-              </SelectContent>
-            </Select>
+            <div>
+              <FieldLabel>Chart Type</FieldLabel>
+              <FieldDescription>
+                What type of data to represent
+              </FieldDescription>
+            </div>
+            <div>
+              <Select
+                value={config.type}
+                onValueChange={(v) =>
+                  setConfig((prev) => ({ ...prev, type: v as ChartType }))
+                }
+              >
+                <SelectTrigger className="w-48">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent align="end">
+                  <SelectItem value="solves">Solves</SelectItem>
+                  <SelectItem value="average">Average</SelectItem>
+                  <SelectItem value="mean">Mean</SelectItem>
+                  <SelectItem value="consistency">Consistency</SelectItem>
+                  {puzzleFeatures.inspection && (
+                    <SelectItem value="inspection">Inspection Time</SelectItem>
+                  )}
+                  {puzzleFeatures.multiphase && (
+                    <SelectItem value="multiphase">Phase Time</SelectItem>
+                  )}
+                </SelectContent>
+              </Select>
+            </div>
           </FieldItem>
 
           <FieldItem orientation="horizontal">
@@ -146,7 +153,7 @@ export function ChartEditor({
       </SheetBody>
 
       <SheetFooter className="justify-between items-center w-full flex-row">
-        {!isNew ? (
+        {!isNew ?
           <AlertDialog>
             <AlertDialogTrigger variant="danger">
               <HugeiconsIcon icon={Delete02Icon} /> Delete
@@ -167,12 +174,14 @@ export function ChartEditor({
               </AlertDialogFooter>
             </AlertDialogContent>
           </AlertDialog>
-        ) : (
-          <div />
-        )}
+        : <div />}
         <div className="flex gap-2">
           <SheetCancel onClick={onCancel} />
-          <SheetAction onClick={() => onSave(config)}>
+          <SheetAction
+            variant={isNew ? "accent" : "success"}
+            onClick={() => onSave(config)}
+          >
+            <HugeiconsIcon icon={isNew ? Plus : Save} />
             {isNew ? "Add Chart" : "Save Changes"}
           </SheetAction>
         </div>

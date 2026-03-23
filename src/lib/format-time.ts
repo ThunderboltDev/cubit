@@ -42,3 +42,25 @@ export function formatTime(
 
   return `${ss}${decimalStr}`;
 }
+
+export function formatTimeShort(ms: number | null): string {
+  if (ms === null || ms === Infinity || ms < 0 || Number.isNaN(ms)) return "--";
+
+  const totalSeconds = Math.floor(ms / 1000);
+  const hours = Math.floor(totalSeconds / 3600);
+  const minutes = Math.floor((totalSeconds % 3600) / 60);
+  const seconds = totalSeconds % 60;
+  const centiseconds = Math.floor((ms % 1000) / 10);
+
+  const cs = centiseconds.toString().padStart(2, "0");
+
+  if (hours > 0) {
+    return `${hours}h ${minutes}m ${seconds}s`;
+  }
+
+  if (minutes > 0) {
+    return `${minutes}m ${seconds}s`;
+  }
+
+  return `${seconds}.${cs}s`;
+}

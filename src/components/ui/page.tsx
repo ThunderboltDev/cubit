@@ -50,11 +50,12 @@ export function PageHeader(props: ComponentProps<"div">) {
   }
 
   return (
-    <div className="sticky top-0 z-20 min-w-dvw px-4 -ml-8 -mt-8 border-b border-border bg-secondary md:static md:bg-transparent md:border-none md:-ml-4 md:mt-0 md:shadow-none">
+    <div className="sticky top-0 z-20 min-w-dvw px-4 -ml-8 -mt-8 border-b border-border bg-muted md:static md:bg-transparent md:border-none md:-ml-4 md:mt-0 md:shadow-none">
       <div className="flex h-14 items-center gap-4">
         <Button
-          variant="ghost"
           size="icon"
+          variant="ghost"
+          className="text-foreground"
           onClick={() => router.history.back()}
         >
           <HugeiconsIcon icon={ArrowLeftIcon} />

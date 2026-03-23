@@ -18,16 +18,12 @@ import { cn } from "@/lib/utils";
 
 const itemVariants = {
   hidden: {
-    y: 12,
-    scale: 0.97,
     opacity: 0,
   },
   show: {
-    y: 0,
-    scale: 1,
     opacity: 1,
     transition: {
-      duration: 0.25,
+      duration: 0.15,
     },
   },
 };
@@ -43,14 +39,14 @@ export function SettingsSection({ title, children }: SettingsSectionProps) {
       <motion.div variants={itemVariants}>
         <FieldLegend
           variant="label"
-          className="px-1 font-bold uppercase tracking-wider text-muted-foreground"
+          className="px-1 mb-2 font-bold uppercase tracking-wider text-accent"
         >
           {title}
         </FieldLegend>
       </motion.div>
       <motion.div
         variants={itemVariants}
-        className="rounded-xl bg-secondary border border-border shadow-md overflow-hidden"
+        className="border-y border-border divide-y divide-border"
       >
         {children}
       </motion.div>
@@ -96,7 +92,7 @@ export function SettingsItem({
       <FieldSet
         className={cn(
           disabled &&
-            "transition-opacity duration-200 ease-in-out opacity-50 cursor-not-allowed",
+            "transition-opacity duration-200 opacity-50 cursor-not-allowed",
         )}
         disabled={disabled}
         aria-disabled={disabled}

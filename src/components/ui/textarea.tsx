@@ -6,7 +6,7 @@ function Textarea({ className, ...props }: ComponentProps<"textarea">) {
     <textarea
       data-slot="textarea"
       className={cn(
-        "input",
+        "input inset-shadow-md",
         "flex field-sizing-content min-h-16 w-full px-3 py-2 scrollbar-3",
         className,
       )}

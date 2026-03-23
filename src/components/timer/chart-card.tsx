@@ -1,24 +1,17 @@
-import { Edit02Icon } from "@hugeicons/core-free-icons";
+import { Edit04Icon } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
-import { motion } from "framer-motion";
 import {
   CartesianGrid,
   Line,
   LineChart,
   ResponsiveContainer,
   Tooltip,
-  XAxis,
   YAxis,
 } from "recharts";
 import { Button } from "@/components/ui/button";
 import { Card, CardBody, CardHeader, CardTitle } from "@/components/ui/card";
-import type { ChartConfig } from "@/lib/constants";
+import type { ChartConfig } from "@/data/defaults";
 import { formatTime } from "@/lib/format-time";
-
-const item = {
-  hidden: { opacity: 0, y: 20 },
-  show: { opacity: 1, y: 0 },
-};
 
 function getChartTitle(config: ChartConfig): string {
   switch (config.type) {
@@ -63,7 +56,7 @@ function ChartTooltip({ active, payload, label, config }: ChartTooltipProps) {
   const valueLabel = getValueLabel(config);
 
   return (
-    <div className="rounded-xl border border-border bg-muted p-3 shadow-md text-sm min-w-[124px]">
+    <div className="rounded-xl bg-muted p-3 text-sm min-w-[124px] drop-shadow-lg border border-border">
       <div className="font-semibold mb-2 text-foreground">Solve #{label}</div>
       <div className="flex justify-between items-center gap-6">
         <span className="text-muted-foreground">{valueLabel}</span>
@@ -84,36 +77,37 @@ interface ChartCardProps {
 
 export function ChartCard({ config, data, hasData, onEdit }: ChartCardProps) {
   return (
-    <motion.div variants={item} layout exit={{ opacity: 0, scale: 0.95 }}>
-      <Card className="overflow-hidden transition-colors">
+    <div>
+      <Card className="overflow-hidden transition-colors py-4">
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
           <CardTitle className="text-base font-medium">
             {getChartTitle(config)}
           </CardTitle>
           <div className="flex items-center gap-1">
-            <Button variant="ghost" size="icon" onClick={onEdit}>
-              <HugeiconsIcon icon={Edit02Icon} className="size-4" />
+            <Button
+              variant="ghost"
+              size="icon"
+              className="rounded-full"
+              onClick={onEdit}
+            >
+              <HugeiconsIcon icon={Edit04Icon} />
             </Button>
           </div>
         </CardHeader>
         <CardBody>
-          {hasData ? (
+          {hasData ?
             <div className="h-[280px] w-full">
-              <ResponsiveContainer width="100%" height="100%">
+              <ResponsiveContainer
+                className="outline-none"
+                width="100%"
+                height="100%"
+              >
                 <LineChart data={data}>
                   <CartesianGrid
                     vertical={false}
-                    strokeDasharray="4 4"
+                    strokeDasharray="6 6"
                     stroke="var(--color-border)"
                     opacity={0.5}
-                  />
-                  <XAxis
-                    dataKey="index"
-                    tick={{
-                      fontSize: 11,
-                      fill: "var(--color-muted-foreground)",
-                    }}
-                    stroke="transparent"
                   />
                   <YAxis
                     tickFormatter={(v: number) => (v / 1000).toFixed(1)}
@@ -122,7 +116,7 @@ export function ChartCard({ config, data, hasData, onEdit }: ChartCardProps) {
                       fill: "var(--color-muted-foreground)",
                     }}
                     stroke="transparent"
-                    width={45}
+                    width={30}
                     domain={["auto", "auto"]}
                   />
                   <Tooltip
@@ -145,10 +139,10 @@ export function ChartCard({ config, data, hasData, onEdit }: ChartCardProps) {
                     type="monotone"
                     dataKey="value"
                     stroke="var(--color-accent)"
-                    strokeWidth={3}
+                    strokeWidth={2}
                     dot={false}
                     activeDot={{
-                      r: 6,
+                      r: 4,
                       strokeWidth: 0,
                       fill: "var(--color-accent)",
                     }}
@@ -158,13 +152,12 @@ export function ChartCard({ config, data, hasData, onEdit }: ChartCardProps) {
                 </LineChart>
               </ResponsiveContainer>
             </div>
-          ) : (
-            <div className="flex h-[280px] items-center justify-center text-sm text-muted-foreground">
+          : <div className="flex h-[280px] items-center justify-center text-sm text-muted-foreground">
               Not enough data to display this chart.
             </div>
-          )}
+          }
         </CardBody>
       </Card>
-    </motion.div>
+    </div>
   );
 }

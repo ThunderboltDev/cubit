@@ -5,8 +5,9 @@ import { cn } from "@/lib/utils";
 
 const badgeVariants = cva(
   [
-    "inline-flex items-center justify-center gap-1 shrink-0 shadow-sm",
+    "inline-flex items-center justify-center gap-1 shrink-0",
     "text-xs font-medium whitespace-nowrap rounded-full no-underline",
+    "shadow-sm inset-shadow-xs inset-shadow-white/10",
     "[&_svg]:shrink-0 [&_svg]:pointer-events-none",
     "[&_svg:not([class*='size-'])]:size-3.5",
     "outline-none focus-ring",
@@ -14,12 +15,11 @@ const badgeVariants = cva(
   {
     variants: {
       variant: {
-        default: "bg-secondary text-foreground",
-        secondary: "bg-muted text-foreground",
-        accent: "bg-accent text-accent-foreground",
-        success: "bg-success text-success-foreground",
-        warning: "bg-warning text-warning-foreground",
-        danger: "bg-danger text-danger-foreground",
+        default: "bg-muted text-foreground shadows-muted",
+        accent: "bg-accent text-white shadows-accent",
+        success: "bg-success text-white shadows-success",
+        warning: "bg-warning text-white shadows-warning",
+        danger: "bg-danger text-white shadows-danger",
       },
       size: {
         sm: "h-5 px-2 py-0.5 text-[10px] [&_svg:not([class*='size-'])]:size-3",
@@ -35,8 +35,7 @@ const badgeVariants = cva(
 );
 
 export interface BadgeProps
-  extends ComponentProps<"span">,
-    VariantProps<typeof badgeVariants> {}
+  extends ComponentProps<"span">, VariantProps<typeof badgeVariants> {}
 
 function Badge({ className, variant, size, ...props }: BadgeProps) {
   return (
