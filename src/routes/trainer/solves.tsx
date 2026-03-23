@@ -124,14 +124,15 @@ function TrainerSolvesPage() {
       </div>
 
       <div className="flex-1 overflow-y-auto">
-        {filteredSolves.length === 0 ?
+        {filteredSolves.length === 0 ? (
           <div className="flex h-full flex-col items-center justify-center gap-2 text-muted-foreground">
             <p className="text-sm">No solves yet.</p>
             <p className="text-xs opacity-60">
               Start drilling on the trainer page.
             </p>
           </div>
-        : <ul className="divide-y divide-border/10">
+        ) : (
+          <ul className="divide-y divide-border/10">
             {filteredSolves.map((solve: TrainerSolve) => {
               const algSet = ALG_SETS[solve.algSetId];
               const caseName =
@@ -139,9 +140,11 @@ function TrainerSolvesPage() {
               const algSetName = algSet?.name ?? solve.algSetId;
 
               const effectiveTime =
-                solve.penalty === "DNF" ? null
-                : solve.penalty === "+2" ? solve.time + 2000
-                : solve.time;
+                solve.penalty === "DNF"
+                  ? null
+                  : solve.penalty === "+2"
+                    ? solve.time + 2000
+                    : solve.time;
 
               return (
                 <li
@@ -165,11 +168,11 @@ function TrainerSolvesPage() {
                         solve.penalty === "+2" && "text-yellow-500",
                       )}
                     >
-                      {solve.penalty === "DNF" ?
-                        "DNF"
-                      : effectiveTime !== null ?
-                        `${formatTime(effectiveTime)}${solve.penalty === "+2" ? "+" : ""}`
-                      : "—"}
+                      {solve.penalty === "DNF"
+                        ? "DNF"
+                        : effectiveTime !== null
+                          ? `${formatTime(effectiveTime)}${solve.penalty === "+2" ? "+" : ""}`
+                          : "—"}
                     </span>
 
                     <Button
@@ -185,7 +188,7 @@ function TrainerSolvesPage() {
               );
             })}
           </ul>
-        }
+        )}
       </div>
     </div>
   );

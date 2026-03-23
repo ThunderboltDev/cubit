@@ -95,7 +95,7 @@ export function ChartCard({ config, data, hasData, onEdit }: ChartCardProps) {
           </div>
         </CardHeader>
         <CardBody>
-          {hasData ?
+          {hasData ? (
             <div className="h-[280px] w-full">
               <ResponsiveContainer
                 className="outline-none"
@@ -152,10 +152,11 @@ export function ChartCard({ config, data, hasData, onEdit }: ChartCardProps) {
                 </LineChart>
               </ResponsiveContainer>
             </div>
-          : <div className="flex h-[280px] items-center justify-center text-sm text-muted-foreground">
+          ) : (
+            <div className="flex h-[280px] items-center justify-center text-sm text-muted-foreground">
               Not enough data to display this chart.
             </div>
-          }
+          )}
         </CardBody>
       </Card>
     </div>

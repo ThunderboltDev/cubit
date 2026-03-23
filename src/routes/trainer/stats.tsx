@@ -129,9 +129,9 @@ function TrainerStatsPage() {
   const filteredByTime = useMemo(() => {
     if (!solves || timeRange === "all") return solves ?? [];
     const cutoff =
-      timeRange === "7d" ?
-        Date.now() - 7 * 24 * 60 * 60 * 1000
-      : Date.now() - 30 * 24 * 60 * 60 * 1000;
+      timeRange === "7d"
+        ? Date.now() - 7 * 24 * 60 * 60 * 1000
+        : Date.now() - 30 * 24 * 60 * 60 * 1000;
     return solves.filter((s: TrainerSolve) => s.createdAt >= cutoff);
   }, [solves, timeRange]);
 
@@ -247,14 +247,15 @@ function TrainerStatsPage() {
 
       {/* Per-case breakdown */}
       <div className="flex-1 overflow-y-auto">
-        {byCaseId.length === 0 ?
+        {byCaseId.length === 0 ? (
           <div className="flex h-full flex-col items-center justify-center gap-2 text-muted-foreground">
             <p className="text-sm">No data yet.</p>
             <p className="text-xs opacity-60">
               Start drilling to see your stats.
             </p>
           </div>
-        : <>
+        ) : (
+          <>
             <div className="px-4 py-2 text-xs font-medium text-muted-foreground uppercase tracking-widest">
               By case
             </div>
@@ -266,7 +267,7 @@ function TrainerStatsPage() {
               />
             ))}
           </>
-        }
+        )}
       </div>
     </div>
   );

@@ -65,11 +65,11 @@ export function generateBulkSolves(
   for (let i = 0; i < count; i++) {
     const time = randomInt(MIN_TIME_MS, MAX_TIME_MS);
     const phases =
-      multiphaseEnabled && multiphaseCount > 0 ?
-        Array.from({ length: multiphaseCount }, () =>
-          Math.floor(time / multiphaseCount),
-        )
-      : undefined;
+      multiphaseEnabled && multiphaseCount > 0
+        ? Array.from({ length: multiphaseCount }, () =>
+            Math.floor(time / multiphaseCount),
+          )
+        : undefined;
 
     if (phases) {
       const sum = phases.reduce((a, b) => a + b, 0);

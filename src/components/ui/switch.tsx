@@ -13,10 +13,8 @@ const thumbTranslate = {
   default: { unchecked: 2, checked: 19 },
 } as const;
 
-interface SwitchProps extends Omit<
-  ComponentProps<typeof SwitchPrimitive.Root>,
-  "size"
-> {
+interface SwitchProps
+  extends Omit<ComponentProps<typeof SwitchPrimitive.Root>, "size"> {
   size?: "sm" | "default";
 }
 

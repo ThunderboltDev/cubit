@@ -167,9 +167,9 @@ function NavItem({
       to={to}
       className={cn(
         "group/nav-item relative flex items-center justify-center rounded-full p-3",
-        isActive ? "text-accent" : (
-          "text-muted-foreground hover:text-secondary-foreground"
-        ),
+        isActive
+          ? "text-accent"
+          : "text-muted-foreground hover:text-secondary-foreground",
       )}
     >
       <AnimatePresence>

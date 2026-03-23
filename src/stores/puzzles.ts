@@ -48,9 +48,9 @@ export const usePuzzlesStore = create<PuzzlesState>()(
         set((state) => {
           const newPuzzles = state.puzzles.filter((puzzle) => puzzle.id !== id);
           const newActiveId =
-            state.activePuzzleId === id ?
-              newPuzzles[0]?.id || null
-            : state.activePuzzleId;
+            state.activePuzzleId === id
+              ? newPuzzles[0]?.id || null
+              : state.activePuzzleId;
           return {
             puzzles: newPuzzles,
             activePuzzleId: newActiveId,
@@ -70,9 +70,9 @@ export const usePuzzlesStore = create<PuzzlesState>()(
       updateDisplayStats: (puzzleId, config) => {
         set((state) => ({
           puzzles: state.puzzles.map((puzzle) =>
-            puzzle.id === puzzleId ?
-              { ...puzzle, displayStats: config }
-            : puzzle,
+            puzzle.id === puzzleId
+              ? { ...puzzle, displayStats: config }
+              : puzzle,
           ),
         }));
       },

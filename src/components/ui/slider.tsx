@@ -26,9 +26,11 @@ function Slider({
 
   const _values = useMemo(
     () =>
-      Array.isArray(value) ? value
-      : Array.isArray(defaultValue) ? defaultValue
-      : [min, max],
+      Array.isArray(value)
+        ? value
+        : Array.isArray(defaultValue)
+          ? defaultValue
+          : [min, max],
     [value, defaultValue, min, max],
   );
 

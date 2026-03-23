@@ -153,7 +153,7 @@ export function ChartEditor({
       </SheetBody>
 
       <SheetFooter className="justify-between items-center w-full flex-row">
-        {!isNew ?
+        {!isNew ? (
           <AlertDialog>
             <AlertDialogTrigger variant="danger">
               <HugeiconsIcon icon={Delete02Icon} /> Delete
@@ -174,7 +174,9 @@ export function ChartEditor({
               </AlertDialogFooter>
             </AlertDialogContent>
           </AlertDialog>
-        : <div />}
+        ) : (
+          <div />
+        )}
         <div className="flex gap-2">
           <SheetCancel onClick={onCancel} />
           <SheetAction

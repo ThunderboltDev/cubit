@@ -98,8 +98,9 @@ export type TrainerSolve<T extends PuzzleType = PuzzleType> =
   BaseTrainerSolve & {
     puzzleType: T;
     time: number;
-  } & (T extends BLDPuzzleType ? { memoTime?: number | null }
-    : { memoTime?: never });
+  } & (T extends BLDPuzzleType
+      ? { memoTime?: number | null }
+      : { memoTime?: never });
 
 export type TrainerSolveInput<T extends PuzzleType = PuzzleType> = Omit<
   TrainerSolve<T>,
