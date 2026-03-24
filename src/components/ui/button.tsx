@@ -1,6 +1,8 @@
 import { Button as ButtonPrimitive } from "@base-ui/react/button";
 import { cva, type VariantProps } from "class-variance-authority";
 import type { ComponentProps } from "react";
+import { clickSound } from "@/data/sfx/click";
+import { useSound } from "@/hooks/use-sound";
 import { cn } from "@/lib/utils";
 
 const baseClasses = [
@@ -36,14 +38,14 @@ const buttonVariants = cva(baseClasses.join(" "), {
         "bg-warning text-white focus-visible:ring-warning/50 shadows-warning active:brightness-80",
     },
     size: {
-      default:
+      "default":
         "h-9 px-4 py-2 has-[>svg]:px-3 [&_svg:not([class*='size-'])]:size-4.5",
-      sm: "h-8.5 gap-1 px-3 text-sm has-[>svg]:px-3 [&_svg:not([class*='size-'])]:size-4",
-      lg: "h-9.5 px-4 gap-2 text-base [&_svg:not([class*='size-'])]:size-5 shadow-xl inset-shadow-sm",
-      icon: "size-9",
+      "sm": "h-8.5 gap-1 px-3 text-sm has-[>svg]:px-3 [&_svg:not([class*='size-'])]:size-4",
+      "lg": "h-9.5 px-4 gap-2 text-base [&_svg:not([class*='size-'])]:size-5 shadow-xl inset-shadow-sm",
+      "icon": "size-9",
       "icon-sm": "size-8",
       "icon-lg": "size-10",
-      responsive: [
+      "responsive": [
         "h-9 px-4 py-2 has-[>svg]:px-3 [&_svg:not([class*='size-'])]:size-4.5",
         "md:h-8 md:gap-1 md:px-3 md:text-sm md:has-[>svg]:px-3",
       ],
@@ -63,12 +65,19 @@ function Button({
   children,
   variant = "default",
   size = "default",
+  onClick,
   ...props
 }: ButtonProps) {
+  const [play] = useSound(clickSound);
+
   return (
     <ButtonPrimitive
       data-slot="button"
       className={cn(buttonVariants({ variant, size, className }))}
+      onClick={(e) => {
+        play();
+        onClick?.(e);
+      }}
       {...props}
     >
       {children}

@@ -25,7 +25,9 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { LinkButton } from "@/components/ui/link-button";
 import { useScramble } from "@/contexts/scramble";
+import { clickSound } from "@/data/sfx/click";
 import { usePuzzles } from "@/hooks/use-puzzles";
+import { useSound } from "@/hooks/use-sound";
 import { cn } from "@/lib/utils";
 
 const NAV_ITEMS = [
@@ -162,14 +164,17 @@ function NavItem({
   isActive: boolean;
   icon: ComponentProps<typeof HugeiconsIcon>["icon"];
 }) {
+  const [play] = useSound(clickSound);
+
   return (
     <Link
       to={to}
+      onClick={() => play()}
       className={cn(
         "group/nav-item relative flex items-center justify-center rounded-full p-3",
-        isActive
-          ? "text-accent"
-          : "text-muted-foreground hover:text-secondary-foreground",
+        isActive ? "text-accent" : (
+          "text-muted-foreground hover:text-secondary-foreground"
+        ),
       )}
     >
       <AnimatePresence>
