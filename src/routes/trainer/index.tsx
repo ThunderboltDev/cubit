@@ -199,8 +199,9 @@ function TrainerPage() {
   const cornerMethodId = currentPuzzle.trainerCornerMethodId ?? null;
   const edgeMethodId = currentPuzzle.trainerEdgeMethodId ?? null;
 
-  const hasMethod = isBld
-    ? cornerMethodId !== null && edgeMethodId !== null
+  const hasMethod =
+    isBld ?
+      cornerMethodId !== null && edgeMethodId !== null
     : methodId !== null;
 
   const availableMethods = useMemo(
@@ -213,11 +214,13 @@ function TrainerPage() {
 
   const methodSteps = useMemo(() => {
     if (isBld) {
-      const cornerMethod = cornerMethodId
-        ? BLD_CORNER_METHODS.find((m) => m.id === cornerMethodId)
+      const cornerMethod =
+        cornerMethodId ?
+          BLD_CORNER_METHODS.find((m) => m.id === cornerMethodId)
         : null;
-      const edgeMethod = edgeMethodId
-        ? BLD_EDGE_METHODS.find((m) => m.id === edgeMethodId)
+      const edgeMethod =
+        edgeMethodId ?
+          BLD_EDGE_METHODS.find((m) => m.id === edgeMethodId)
         : null;
 
       return [...(cornerMethod?.steps ?? []), ...(edgeMethod?.steps ?? [])];
@@ -309,9 +312,9 @@ function TrainerPage() {
     let nextCase = currentCase;
     if (isRandom) {
       const pool =
-        activeCases.length > 1
-          ? activeCases.filter((c) => c.id !== caseId)
-          : activeCases;
+        activeCases.length > 1 ?
+          activeCases.filter((c) => c.id !== caseId)
+        : activeCases;
       nextCase = pool[Math.floor(Math.random() * pool.length)];
     } else {
       const currentIndex = activeCases.findIndex((c) => c.id === caseId);
@@ -429,8 +432,9 @@ function TrainerPage() {
     (s) => s.algSetId === algSetId,
   );
 
-  const displayAlg = currentCase?.isDynamic
-    ? dynamicScramble || currentCase.alg
+  const displayAlg =
+    currentCase?.isDynamic ?
+      dynamicScramble || currentCase.alg
     : (currentCase?.alg ?? "");
 
   return (
@@ -546,7 +550,7 @@ function TrainerPage() {
           </Button>
         </div>
 
-        {currentCase ? (
+        {currentCase ?
           <motion.div
             initial={{ opacity: 0, y: -10 }}
             animate={{
@@ -572,7 +576,7 @@ function TrainerPage() {
                     exit={{ opacity: 0, height: 0 }}
                     className="flex flex-col items-center gap-2"
                   >
-                    {!showAlg ? (
+                    {!showAlg ?
                       <Button
                         size="sm"
                         variant="ghost"
@@ -580,11 +584,10 @@ function TrainerPage() {
                       >
                         Show alg
                       </Button>
-                    ) : (
-                      <div className="font-mono text-base text-green-400 font-semibold px-3 py-2 bg-accent/10 rounded-lg">
+                    : <div className="font-mono text-base text-green-400 font-semibold px-3 py-2 bg-accent/10 rounded-lg">
                         {displayAlg}
                       </div>
-                    )}
+                    }
                   </motion.div>
                 )}
               </AnimatePresence>
@@ -594,9 +597,9 @@ function TrainerPage() {
               <div className="max-h-[120px] md:max-h-[160px] flex items-center justify-center mt-2">
                 <ScramblePreview
                   scramble={
-                    currentCase.isDynamic
-                      ? dynamicScramble || currentCase.alg
-                      : `${activeAlgSet?.orientation ?? ""} ${currentCase.alg}`
+                    currentCase.isDynamic ?
+                      dynamicScramble || currentCase.alg
+                    : `${activeAlgSet?.orientation ?? ""} ${currentCase.alg}`
                   }
                   puzzleType={currentPuzzle.type}
                   visualization={currentPuzzle.scramblePreviewVisualization}
@@ -604,8 +607,7 @@ function TrainerPage() {
               </div>
             )}
           </motion.div>
-        ) : (
-          <div className="flex-1 flex flex-col items-center justify-center gap-4 text-muted-foreground pointer-events-auto">
+        : <div className="flex-1 flex flex-col items-center justify-center gap-4 text-muted-foreground pointer-events-auto">
             <HugeiconsIcon
               icon={GridViewIcon}
               size={32}
@@ -613,7 +615,7 @@ function TrainerPage() {
             />
             <p className="text-sm">Select a step to start drilling.</p>
           </div>
-        )}
+        }
 
         <div className="flex-1" />
 
@@ -670,11 +672,10 @@ function TrainerPage() {
                     <Button
                       className="group/button rounded-full"
                       variant={
-                        danger
-                          ? "danger"
-                          : active && key !== "delete"
-                            ? "danger"
-                            : "default"
+                        danger ? "danger"
+                        : active && key !== "delete" ?
+                          "danger"
+                        : "default"
                       }
                       onClick={onClick}
                     >

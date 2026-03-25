@@ -1,6 +1,14 @@
 import { useCallback, useEffect, useRef, useState } from "react";
+import { inspectionTimeSound } from "@/data/sfx/inspection-time";
+import { newRecord0Sound } from "@/data/sfx/new-record/0";
+import { newRecord1Sound } from "@/data/sfx/new-record/1";
+import { newRecord2Sound } from "@/data/sfx/new-record/2";
+import { solveCompletePlus2Sound } from "@/data/sfx/solve-complete/+2";
+import { solveCompleteDnfSound } from "@/data/sfx/solve-complete/dnf";
+import { solveCompleteOkSound } from "@/data/sfx/solve-complete/ok";
 import { usePuzzles } from "@/hooks/use-puzzles";
 import { useSettings } from "@/hooks/use-settings";
+import { useSound } from "@/hooks/use-sound";
 import { useTrainerSolves } from "@/hooks/use-trainer-solves";
 import { formatTime } from "@/lib/format-time";
 import type { Penalty } from "@/types/puzzles";
@@ -35,6 +43,14 @@ export function useTrainerTimer({
     groupId,
     caseId,
   });
+
+  const [playRecord0] = useSound(newRecord0Sound);
+  const [playRecord1] = useSound(newRecord1Sound);
+  const [playRecord2] = useSound(newRecord2Sound);
+  const [playInspection] = useSound(inspectionTimeSound);
+  const [playSolveOk] = useSound(solveCompleteOkSound);
+  const [playSolvePlus2] = useSound(solveCompletePlus2Sound);
+  const [playSolveDnf] = useSound(solveCompleteDnfSound);
 
   const [displayTime, setDisplayTime] = useState(0);
   const [isReady, setIsReady] = useState(false);
@@ -113,6 +129,32 @@ export function useTrainerTimer({
         if (savedSolve) {
           setCurrentSolveId(savedSolve.id);
           onSolveComplete?.();
+
+          if (savedSolve.penalty === "DNF") {
+            playSolveDnf();
+          } else if (savedSolve.penalty === "+2") {
+            playSolvePlus2();
+          } else {
+            playSolveOk();
+          }
+
+          if (savedSolve.penalty !== "DNF" && (solves?.length ?? 0) > 0) {
+            const previousBest = (solves ?? [])
+              .filter((s) => s.id !== savedSolve.id && s.penalty !== "DNF")
+              .reduce((min, s) => {
+                const time = s.time + (s.penalty === "+2" ? 2000 : 0);
+                return time < min ? time : min;
+              }, Infinity);
+
+            const currentTime =
+              savedSolve.time + (savedSolve.penalty === "+2" ? 2000 : 0);
+
+            if (currentTime < previousBest && previousBest !== Infinity) {
+              playRecord0();
+              playRecord1();
+              playRecord2();
+            }
+          }
         }
       } catch (error) {
         console.error("Failed to save trainer solve:", error);
@@ -122,7 +164,21 @@ export function useTrainerTimer({
       inspectionStartRef.current = 0;
       setControlsVisible(true);
     },
-    [algSetId, groupId, caseId, currentPuzzle, addSolve, onSolveComplete],
+    [
+      algSetId,
+      groupId,
+      caseId,
+      currentPuzzle,
+      addSolve,
+      onSolveComplete,
+      playSolveDnf,
+      playSolvePlus2,
+      playSolveOk,
+      playRecord0,
+      playRecord1,
+      playRecord2,
+      solves,
+    ],
   );
 
   const stopTimer = useCallback(() => {
@@ -166,13 +222,17 @@ export function useTrainerTimer({
 
         const remainingSec = Math.ceil(remaining / 1000);
         const currentColor: "normal" | "warning" | "danger" =
-          remainingSec <= 3
-            ? "danger"
-            : remainingSec <= 7
-              ? "warning"
-              : "normal";
+          remainingSec <= 3 ? "danger"
+          : remainingSec <= 7 ? "warning"
+          : "normal";
 
         if (currentColor !== lastInspectionColorRef.current) {
+          if (
+            lastInspectionColorRef.current !== "normal" ||
+            currentColor !== "normal"
+          ) {
+            playInspection();
+          }
           lastInspectionColorRef.current = currentColor;
         }
 
@@ -202,7 +262,13 @@ export function useTrainerTimer({
     return () => {
       if (rafRef.current) cancelAnimationFrame(rafRef.current);
     };
-  }, [timerState, currentPuzzle, startSolve, applyInspectionPenalty]);
+  }, [
+    timerState,
+    currentPuzzle,
+    startSolve,
+    applyInspectionPenalty,
+    playInspection,
+  ]);
 
   const handlePressIn = useCallback(() => {
     if (!caseId) return;
