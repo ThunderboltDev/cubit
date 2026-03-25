@@ -163,9 +163,8 @@ export function useTimer() {
     phaseTimesRef.current.push(phaseDuration);
     phaseStartRef.current = now;
 
-    const totalPhases = currentPuzzle.multiphaseEnabled
-      ? currentPuzzle.multiphaseCount
-      : 1;
+    const totalPhases =
+      currentPuzzle.multiphaseEnabled ? currentPuzzle.multiphaseCount : 1;
 
     if (phaseTimesRef.current.length >= totalPhases) {
       const totalTime = phaseTimesRef.current.reduce(
@@ -348,6 +347,9 @@ export function useTimer() {
     if (timerState === "running") return "text-foreground";
     if (timerState === "holding")
       return isReady ? "text-green-500" : "text-danger";
+
+    if (currentSolve?.penalty === "+2") return "text-warning";
+    if (currentSolve?.penalty === "DNF") return "text-danger";
 
     return "text-foreground";
   };

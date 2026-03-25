@@ -2,7 +2,7 @@ import {
   Copy01Icon,
   Delete02Icon,
   Flag02Icon,
-  Tick,
+  Tick02Icon,
   UnavailableIcon,
 } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
@@ -211,7 +211,7 @@ function SolvesPage() {
       </PageHeader>
 
       <PageBody>
-        {filteredSolves.length === 0 ? (
+        {filteredSolves.length === 0 ?
           <motion.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
@@ -219,12 +219,11 @@ function SolvesPage() {
             onAnimationComplete={() => (hasPageAnimated = true)}
             className="flex h-40 items-center justify-center text-muted-foreground"
           >
-            {solves.length === 0
-              ? "No solves yet. Start timing!"
-              : "No solves match this filter."}
+            {solves.length === 0 ?
+              "No solves yet. Start timing!"
+            : "No solves match this filter."}
           </motion.div>
-        ) : (
-          <motion.div
+        : <motion.div
             key={`${penaltyFilter}-${sortOption}`}
             variants={containerVariants}
             initial={hasPageAnimated ? "show" : "hidden"}
@@ -265,7 +264,7 @@ function SolvesPage() {
               );
             })}
           </motion.div>
-        )}
+        }
       </PageBody>
 
       <Sheet
@@ -329,17 +328,20 @@ function SolvesPage() {
                       Scramble
                     </span>
                     <Button
-                      size="sm"
+                      size="icon-sm"
                       variant="ghost"
                       className="hover:text-foreground"
+                      title={copyFeedback ? "Copied!" : "Copy"}
                       onClick={() => handleCopyScramble(selectedSolve.scramble)}
                     >
                       <HugeiconsIcon
                         icon={Copy01Icon}
-                        altIcon={Tick}
+                        altIcon={Tick02Icon}
                         showAlt={copyFeedback}
                       />
-                      {copyFeedback ? "Copied!" : "Copy"}
+                      <span className="sr-only">
+                        {copyFeedback ? "Copied!" : "Copy"}
+                      </span>
                     </Button>
                   </div>
                   <p className="overflow-x-auto whitespace-pre-wrap rounded-lg border border-border bg-inset px-4 py-3 font-mono text-[13px] leading-relaxed text-muted-foreground">
@@ -421,8 +423,9 @@ function SolvesPage() {
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogCancel />
             <AlertDialogAction onClick={handleDelete} variant="danger">
+              <HugeiconsIcon icon={Delete02Icon} />
               Delete
             </AlertDialogAction>
           </AlertDialogFooter>
@@ -460,24 +463,22 @@ function PenaltyPill({
   onClick: () => void;
 }) {
   const activeClasses =
-    variant === "warning"
-      ? "bg-warning text-white shadows-warning"
-      : variant === "danger"
-        ? "bg-danger text-white shadows-danger"
-        : "bg-muted shadows-muted text-foreground";
+    variant === "warning" ? "bg-warning text-white shadows-warning"
+    : variant === "danger" ? "bg-danger text-white shadows-danger"
+    : "bg-muted shadows-muted text-foreground";
 
   return (
-    <button
+    <Button
       type="button"
+      variant="ghost"
       onClick={onClick}
       className={cn(
-        "flex flex-1 items-center justify-center gap-1.5 rounded-md py-2 text-sm font-medium",
-        "transition-all duration-150",
+        "flex-1",
         active ? activeClasses : "text-muted-foreground hover:text-foreground",
       )}
     >
-      {icon && <HugeiconsIcon icon={icon} className="size-4 shrink-0" />}
+      {icon && <HugeiconsIcon icon={icon} />}
       {label}
-    </button>
+    </Button>
   );
 }
