@@ -61,37 +61,35 @@ export function ChartEditor({
     <>
       <SheetBody>
         <FieldGroup>
-          <FieldItem orientation="horizontal">
+          <FieldItem orientation="horizontal" className="justify-between">
             <div>
               <FieldLabel>Chart Type</FieldLabel>
               <FieldDescription>
                 What type of data to represent
               </FieldDescription>
             </div>
-            <div>
-              <Select
-                value={config.type}
-                onValueChange={(v) =>
-                  setConfig((prev) => ({ ...prev, type: v as ChartType }))
-                }
-              >
-                <SelectTrigger className="w-48">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent align="end">
-                  <SelectItem value="solves">Solves</SelectItem>
-                  <SelectItem value="average">Average</SelectItem>
-                  <SelectItem value="mean">Mean</SelectItem>
-                  <SelectItem value="consistency">Consistency</SelectItem>
-                  {puzzleFeatures.inspection && (
-                    <SelectItem value="inspection">Inspection Time</SelectItem>
-                  )}
-                  {puzzleFeatures.multiphase && (
-                    <SelectItem value="multiphase">Phase Time</SelectItem>
-                  )}
-                </SelectContent>
-              </Select>
-            </div>
+            <Select
+              value={config.type}
+              onValueChange={(v) =>
+                setConfig((prev) => ({ ...prev, type: v as ChartType }))
+              }
+            >
+              <SelectTrigger className="w-48">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent align="end">
+                <SelectItem value="solves">Solves</SelectItem>
+                <SelectItem value="average">Average</SelectItem>
+                <SelectItem value="mean">Mean</SelectItem>
+                <SelectItem value="consistency">Consistency</SelectItem>
+                {puzzleFeatures.inspection && (
+                  <SelectItem value="inspection">Inspection Time</SelectItem>
+                )}
+                {puzzleFeatures.multiphase && (
+                  <SelectItem value="multiphase">Phase Time</SelectItem>
+                )}
+              </SelectContent>
+            </Select>
           </FieldItem>
 
           <FieldItem orientation="horizontal">
@@ -153,7 +151,7 @@ export function ChartEditor({
       </SheetBody>
 
       <SheetFooter className="justify-between items-center w-full flex-row">
-        {!isNew ? (
+        {!isNew ?
           <AlertDialog>
             <AlertDialogTrigger variant="danger">
               <HugeiconsIcon icon={Delete02Icon} /> Delete
@@ -174,9 +172,7 @@ export function ChartEditor({
               </AlertDialogFooter>
             </AlertDialogContent>
           </AlertDialog>
-        ) : (
-          <div />
-        )}
+        : <div />}
         <div className="flex gap-2">
           <SheetCancel onClick={onCancel} />
           <SheetAction

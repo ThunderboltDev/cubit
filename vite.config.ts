@@ -4,6 +4,7 @@ import { tanstackRouter } from "@tanstack/router-plugin/vite";
 import viteReact from "@vitejs/plugin-react";
 import type { Plugin } from "vite";
 import { defineConfig } from "vite";
+import { VitePWA } from "vite-plugin-pwa";
 import tsconfigPaths from "vite-tsconfig-paths";
 
 function stripWorkerPreloadHelper(): Plugin {
@@ -38,6 +39,29 @@ const config = defineConfig({
     tanstackRouter({ target: "react", autoCodeSplitting: true }),
     viteReact(),
     stripWorkerPreloadHelper(),
+    VitePWA({
+      registerType: "autoUpdate",
+      manifest: {
+        id: "cubit",
+        name: "Cubit",
+        short_name: "Cubit",
+        theme_color: "#0076cc",
+        display: "standalone",
+        orientation: "portrait",
+        icons: [
+          {
+            src: "/android-chrome-192x192.png",
+            sizes: "192x192",
+            type: "image/png",
+          },
+          {
+            src: "/android-chrome-512x512.png",
+            sizes: "512x512",
+            type: "image/png",
+          },
+        ],
+      },
+    }) as Plugin[],
   ],
   optimizeDeps: {
     exclude: ["cubing"],

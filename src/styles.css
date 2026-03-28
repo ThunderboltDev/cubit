@@ -1,6 +1,7 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 @import "@cubing/icons/css";
+@import "shadcn/tailwind.css";
 
 @custom-variant dark (&:is(.dark *));
 

@@ -1,6 +1,8 @@
 import { Switch as SwitchPrimitive } from "@base-ui/react/switch";
 import { motion } from "framer-motion";
 import type { ComponentProps } from "react";
+import { switchSound } from "@/data/sfx/switch";
+import { useSound } from "@/hooks/use-sound";
 import { cn } from "@/lib/utils";
 
 const thumbSize = {
@@ -13,8 +15,10 @@ const thumbTranslate = {
   default: { unchecked: 2, checked: 19 },
 } as const;
 
-interface SwitchProps
-  extends Omit<ComponentProps<typeof SwitchPrimitive.Root>, "size"> {
+interface SwitchProps extends Omit<
+  ComponentProps<typeof SwitchPrimitive.Root>,
+  "size"
+> {
   size?: "sm" | "default";
 }
 
@@ -24,11 +28,13 @@ function Switch({
   checked,
   ...props
 }: SwitchProps) {
+  const [play] = useSound(switchSound);
   const translate = thumbTranslate[size];
 
   return (
     <SwitchPrimitive.Root
       data-slot="switch"
+      onClick={() => play()}
       className={cn(
         "peer group/switch relative inline-flex items-center shrink-0",
         "rounded-full border-none outline-none",

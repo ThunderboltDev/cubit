@@ -1,8 +1,17 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useScramble } from "@/contexts/scramble";
+import { inspectionTimeSound } from "@/data/sfx/inspection-time";
+import { newRecord0Sound } from "@/data/sfx/new-record/0";
+import { newRecord1Sound } from "@/data/sfx/new-record/1";
+import { newRecord2Sound } from "@/data/sfx/new-record/2";
+import { solveCompletePlus2Sound } from "@/data/sfx/solve-complete/+2";
+import { solveCompleteDnfSound } from "@/data/sfx/solve-complete/dnf";
+import { solveCompleteOkSound } from "@/data/sfx/solve-complete/ok";
+import { useHaptic } from "@/hooks/use-haptic";
 import { usePuzzles } from "@/hooks/use-puzzles";
 import { useSettings } from "@/hooks/use-settings";
 import { useSolves } from "@/hooks/use-solves";
+import { useSound } from "@/hooks/use-sound";
 import { useTimerStats } from "@/hooks/use-timer-stats";
 import { formatTime } from "@/lib/format-time";
 import { useTimerStateStore } from "@/stores/timer-state";
@@ -23,11 +32,22 @@ export function useTimer() {
   const { solves, addSolve, deleteSolve, updatePenalty } = useSolves({
     puzzleId: currentPuzzle.id,
   });
+
   const stats = useTimerStats();
+  const { vibrate } = useHaptic();
+
+  const [playRecord0] = useSound(newRecord0Sound);
+  const [playRecord1] = useSound(newRecord1Sound);
+  const [playRecord2] = useSound(newRecord2Sound);
+  const [playInspection] = useSound(inspectionTimeSound);
+  const [playSolveOk] = useSound(solveCompleteOkSound);
+  const [playSolvePlus2] = useSound(solveCompletePlus2Sound);
+  const [playSolveDnf] = useSound(solveCompleteDnfSound);
 
   const [displayTime, setDisplayTime] = useState(0);
   const [isReady, setIsReady] = useState(false);
   const [timerState, setTimerStateLocal] = useState<TimerState>("idle");
+
   const syncTimerState = useTimerStateStore((s) => s.setTimerState);
 
   const setTimerState = useCallback(
@@ -64,6 +84,32 @@ export function useTimer() {
     };
   }, []);
 
+  const prevSolveIdRef = useRef<string | null>(null);
+
+  useEffect(() => {
+    if (currentSolveId === prevSolveIdRef.current) return;
+    if (!stats || !solves?.[0] || solves[0].id !== currentSolveId) return;
+
+    prevSolveIdRef.current = currentSolveId;
+
+    const containsMajorRecord = stats.stats.some((s) => s.isNewRecord);
+
+    if (containsMajorRecord) {
+      playRecord0();
+      playRecord1();
+      playRecord2();
+      vibrate("success");
+    }
+  }, [
+    currentSolveId,
+    stats,
+    solves,
+    playRecord0,
+    playRecord1,
+    playRecord2,
+    vibrate,
+  ]);
+
   const timerStateRef = useRef<TimerState>("idle");
   timerStateRef.current = timerState;
 
@@ -78,7 +124,8 @@ export function useTimer() {
     setInspectionTime((currentPuzzle.inspectionDuration || 15) * 1000);
     setCurrentSolveId(null);
     setControlsVisible(false);
-  }, [currentPuzzle, setTimerState]);
+    vibrate("buzz");
+  }, [currentPuzzle, setTimerState, vibrate]);
 
   const startSolve = useCallback(() => {
     if (rafRef.current) cancelAnimationFrame(rafRef.current);
@@ -91,7 +138,8 @@ export function useTimer() {
     setCurrentSolveId(null);
     setCurrentPhase(currentPuzzle.multiphaseEnabled ? 1 : 0);
     lastInspectionColorRef.current = "normal";
-  }, [currentPuzzle, setTimerState]);
+    vibrate("rigid");
+  }, [currentPuzzle, setTimerState, vibrate]);
 
   const endSolve = useCallback(
     async (finalTime: number) => {
@@ -143,6 +191,17 @@ export function useTimer() {
         if (savedSolve) {
           setCurrentSolveId(savedSolve.id);
           generateNewScramble();
+
+          if (savedSolve.penalty === "DNF") {
+            playSolveDnf();
+            vibrate("error");
+          } else if (savedSolve.penalty === "+2") {
+            playSolvePlus2();
+            vibrate("warning");
+          } else {
+            playSolveOk();
+            vibrate("success");
+          }
         }
       } catch (error) {
         console.error("Failed to save solve:", error);
@@ -154,7 +213,16 @@ export function useTimer() {
       setCurrentPhase(0);
       setControlsVisible(true);
     },
-    [currentPuzzle, addSolve, generateNewScramble, scrambleRef.current],
+    [
+      currentPuzzle,
+      addSolve,
+      generateNewScramble,
+      scrambleRef,
+      playSolveDnf,
+      playSolvePlus2,
+      playSolveOk,
+      vibrate,
+    ],
   );
 
   const handlePhaseComplete = useCallback(() => {
@@ -163,9 +231,8 @@ export function useTimer() {
     phaseTimesRef.current.push(phaseDuration);
     phaseStartRef.current = now;
 
-    const totalPhases = currentPuzzle.multiphaseEnabled
-      ? currentPuzzle.multiphaseCount
-      : 1;
+    const totalPhases =
+      currentPuzzle.multiphaseEnabled ? currentPuzzle.multiphaseCount : 1;
 
     if (phaseTimesRef.current.length >= totalPhases) {
       const totalTime = phaseTimesRef.current.reduce(
@@ -222,6 +289,12 @@ export function useTimer() {
         else if (remainingSec <= 7) currentColor = "warning";
 
         if (currentColor !== lastInspectionColorRef.current) {
+          if (
+            lastInspectionColorRef.current !== "normal" ||
+            currentColor !== "normal"
+          ) {
+            playInspection();
+          }
           lastInspectionColorRef.current = currentColor;
         }
 
@@ -254,7 +327,13 @@ export function useTimer() {
     return () => {
       if (rafRef.current) cancelAnimationFrame(rafRef.current);
     };
-  }, [timerState, currentPuzzle, startSolve, applyInspectionPenalty]);
+  }, [
+    timerState,
+    currentPuzzle,
+    startSolve,
+    applyInspectionPenalty,
+    playInspection,
+  ]);
 
   const handlePressIn = useCallback(() => {
     if (timerState === "running") {
@@ -282,6 +361,7 @@ export function useTimer() {
         if (readyTimeoutRef.current) clearTimeout(readyTimeoutRef.current);
         readyTimeoutRef.current = setTimeout(() => {
           setIsReady(true);
+          vibrate("light");
         }, settings.holdThreshold);
       }
     }
@@ -292,6 +372,7 @@ export function useTimer() {
     startInspection,
     settings.holdThreshold,
     setTimerState,
+    vibrate,
   ]);
 
   const handlePressOut = useCallback(() => {
@@ -348,6 +429,9 @@ export function useTimer() {
     if (timerState === "running") return "text-foreground";
     if (timerState === "holding")
       return isReady ? "text-green-500" : "text-danger";
+
+    if (currentSolve?.penalty === "+2") return "text-warning";
+    if (currentSolve?.penalty === "DNF") return "text-danger";
 
     return "text-foreground";
   };

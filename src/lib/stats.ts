@@ -148,7 +148,12 @@ export function calculateBestAverage(
   n: number,
   trimPercentage: number = 5,
 ): number | null {
-  if (solves.length < n) return null;
+  const targetN = n === Infinity ? solves.length : n;
+  if (solves.length < targetN || targetN === 0) return null;
+
+  if (n === Infinity) {
+    return calculateAverageOfN(solves, Infinity, trimPercentage);
+  }
 
   let bestAvg: number | null = null;
 
@@ -165,7 +170,12 @@ export function calculateBestAverage(
 }
 
 export function calculateBestMean(solves: Solve[], n: number): number | null {
-  if (solves.length < n) return null;
+  const targetN = n === Infinity ? solves.length : n;
+  if (solves.length < targetN || targetN === 0) return null;
+
+  if (n === Infinity) {
+    return calculateMeanOfN(solves, Infinity);
+  }
 
   let bestMean: number | null = null;
 
@@ -185,7 +195,17 @@ export function calculateBestConsistency(
   solves: Solve[],
   n: number,
 ): number | null {
-  if (solves.length < n || n < 2) return null;
+  const targetN = n === Infinity ? solves.length : n;
+  if (
+    solves.length < targetN ||
+    targetN === 0 ||
+    (n === Infinity && targetN < 2)
+  )
+    return null;
+
+  if (n === Infinity) {
+    return calculateConsistencyOfN(solves, Infinity);
+  }
 
   let bestConsistency: number | null = null;
 

@@ -1,6 +1,8 @@
 import { Slider as SliderPrimitive } from "@base-ui/react/slider";
 import { useMemo, useRef } from "react";
 import { Badge } from "@/components/ui/badge";
+import { sliderSound } from "@/data/sfx/slider";
+import { useSound } from "@/hooks/use-sound";
 import { cn } from "@/lib/utils";
 
 interface SliderProps extends SliderPrimitive.Root.Props {
@@ -22,15 +24,15 @@ function Slider({
   badgeWidth = "3rem",
   ...props
 }: SliderProps) {
+  const [play] = useSound(sliderSound);
+
   const trackRef = useRef<HTMLDivElement>(null);
 
-  const _values = useMemo(
+  const _values: number[] = useMemo(
     () =>
-      Array.isArray(value)
-        ? value
-        : Array.isArray(defaultValue)
-          ? defaultValue
-          : [min, max],
+      Array.isArray(value) ? value
+      : Array.isArray(defaultValue) ? defaultValue
+      : [min, max],
     [value, defaultValue, min, max],
   );
 
@@ -81,6 +83,13 @@ function Slider({
           max={max}
           thumbAlignment="edge"
           {...props}
+          onValueChange={(value, e) => {
+            const oldValue = Array.isArray(value) ? value[0] : value;
+
+            if (_values[0] !== oldValue) play();
+
+            props.onValueChange?.(value, e);
+          }}
         >
           <SliderPrimitive.Control className="data-vertical:min-h-40 relative flex w-full touch-none items-center select-none data-disabled:opacity-50 data-vertical:h-full data-vertical:w-auto data-vertical:flex-col">
             <SliderPrimitive.Track

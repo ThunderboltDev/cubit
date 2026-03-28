@@ -1,7 +1,7 @@
 import {
   Bug02Icon,
-  Cancel01Icon,
   Setting07Icon,
+  UnavailableIcon,
 } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { AnimatePresence, motion } from "framer-motion";
@@ -12,6 +12,7 @@ import { Label } from "@/components/ui/label";
 import {
   Sheet,
   SheetBody,
+  SheetCancel,
   SheetContent,
   SheetDescription,
   SheetFooter,
@@ -50,7 +51,7 @@ export function DevToolsProvider() {
   );
 }
 
-const TAP_TARGET = 7;
+const TAP_TARGET = 5;
 const TAP_WINDOW_MS = 3000;
 
 export function useDevToolsTapActivator() {
@@ -85,8 +86,7 @@ function DevToolsBadge() {
     >
       <Button
         size="icon-lg"
-        className="rounded-full"
-        variant="accent"
+        className="rounded-full border-t border-border"
         onClick={togglePanel}
       >
         <HugeiconsIcon icon={Bug02Icon} />
@@ -294,14 +294,18 @@ function DevToolsSheet() {
         </SheetBody>
 
         <SheetFooter>
-          <Button
-            size="responsive"
-            onClick={disableDevMode}
-            disabled={isGenerating}
-          >
-            <HugeiconsIcon icon={Cancel01Icon} />
-            Disable Dev Mode
-          </Button>
+          <div className="mr-auto">
+            <Button
+              variant="danger"
+              size="responsive"
+              onClick={disableDevMode}
+              disabled={isGenerating}
+            >
+              <HugeiconsIcon icon={UnavailableIcon} />
+              Disable
+            </Button>
+          </div>
+          <SheetCancel />
           <Button
             variant="accent"
             size="responsive"
@@ -313,7 +317,7 @@ function DevToolsSheet() {
               icon={Setting07Icon}
               className={cn(isGenerating && "animate-spin")}
             />
-            {isGenerating ? "Generating ..." : "Generate Solves"}
+            {isGenerating ? "Generating ..." : "Generate"}
           </Button>
         </SheetFooter>
       </SheetContent>
