@@ -6,6 +6,7 @@ import { newRecord2Sound } from "@/data/sfx/new-record/2";
 import { solveCompletePlus2Sound } from "@/data/sfx/solve-complete/+2";
 import { solveCompleteDnfSound } from "@/data/sfx/solve-complete/dnf";
 import { solveCompleteOkSound } from "@/data/sfx/solve-complete/ok";
+import { useHaptic } from "@/hooks/use-haptic";
 import { usePuzzles } from "@/hooks/use-puzzles";
 import { useSettings } from "@/hooks/use-settings";
 import { useSound } from "@/hooks/use-sound";
@@ -52,6 +53,8 @@ export function useTrainerTimer({
   const [playSolvePlus2] = useSound(solveCompletePlus2Sound);
   const [playSolveDnf] = useSound(solveCompleteDnfSound);
 
+  const { vibrate } = useHaptic();
+
   const [displayTime, setDisplayTime] = useState(0);
   const [isReady, setIsReady] = useState(false);
   const [timerState, setTimerState] = useState<TimerState>("idle");
@@ -94,7 +97,8 @@ export function useTrainerTimer({
     setInspectionTime((currentPuzzle.inspectionDuration || 15) * 1000);
     setCurrentSolveId(null);
     setControlsVisible(false);
-  }, [currentPuzzle]);
+    vibrate("buzz");
+  }, [currentPuzzle, vibrate]);
 
   const startSolve = useCallback(() => {
     if (rafRef.current) cancelAnimationFrame(rafRef.current);
@@ -104,7 +108,8 @@ export function useTrainerTimer({
     setDisplayTime(0);
     setCurrentSolveId(null);
     lastInspectionColorRef.current = "normal";
-  }, []);
+    vibrate("rigid");
+  }, [vibrate]);
 
   const endSolve = useCallback(
     async (finalTime: number) => {
@@ -132,10 +137,13 @@ export function useTrainerTimer({
 
           if (savedSolve.penalty === "DNF") {
             playSolveDnf();
+            vibrate("error");
           } else if (savedSolve.penalty === "+2") {
             playSolvePlus2();
+            vibrate("warning");
           } else {
             playSolveOk();
+            vibrate("success");
           }
 
           if (savedSolve.penalty !== "DNF" && (solves?.length ?? 0) > 0) {
@@ -153,6 +161,7 @@ export function useTrainerTimer({
               playRecord0();
               playRecord1();
               playRecord2();
+              vibrate("success");
             }
           }
         }
@@ -178,6 +187,7 @@ export function useTrainerTimer({
       playRecord1,
       playRecord2,
       solves,
+      vibrate,
     ],
   );
 
@@ -282,10 +292,10 @@ export function useTrainerTimer({
       setIsReady(false);
 
       if (readyTimeoutRef.current) clearTimeout(readyTimeoutRef.current);
-      readyTimeoutRef.current = setTimeout(
-        () => setIsReady(true),
-        settings.holdThreshold,
-      );
+      readyTimeoutRef.current = setTimeout(() => {
+        setIsReady(true);
+        vibrate("light");
+      }, settings.holdThreshold);
     } else if (timerState === "idle" || timerState === "stopped") {
       if (currentPuzzle.inspectionEnabled) {
         startInspection();
@@ -297,10 +307,10 @@ export function useTrainerTimer({
         setControlsVisible(false);
 
         if (readyTimeoutRef.current) clearTimeout(readyTimeoutRef.current);
-        readyTimeoutRef.current = setTimeout(
-          () => setIsReady(true),
-          settings.holdThreshold,
-        );
+        readyTimeoutRef.current = setTimeout(() => {
+          setIsReady(true);
+          vibrate("light");
+        }, settings.holdThreshold);
       }
     }
   }, [
@@ -310,6 +320,7 @@ export function useTrainerTimer({
     startInspection,
     settings.holdThreshold,
     caseId,
+    vibrate,
   ]);
 
   const handlePressOut = useCallback(() => {
