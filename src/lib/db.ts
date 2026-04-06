@@ -11,7 +11,8 @@ class CubitDatabase extends Dexie {
     super("cubit-db");
 
     this.version(1).stores({
-      solves: "id, puzzleId, createdAt, [puzzleId+createdAt]",
+      solves:
+        "id, puzzleId, createdAt, penalty, [puzzleId+createdAt], [puzzleId+penalty]",
       trainerSolves:
         "id, puzzleId, puzzleType, algSetId, groupId, caseId, createdAt, [puzzleId+createdAt]",
     });
