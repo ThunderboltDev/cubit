@@ -7,8 +7,15 @@ import {
 } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { createFileRoute } from "@tanstack/react-router";
-import { motion } from "framer-motion";
-import { type ComponentProps, type ReactNode, useMemo, useState } from "react";
+import { useVirtualizer } from "@tanstack/react-virtual";
+import {
+  type ComponentProps,
+  type ReactNode,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import { useCopyToClipboard } from "react-use";
 import {
   AlertDialog,
@@ -23,7 +30,6 @@ import {
 import { Button } from "@/components/ui/button";
 import {
   Page,
-  PageBody,
   PageDescription,
   PageHeader,
   PageTitle,
@@ -44,8 +50,13 @@ import {
   SheetHeader,
   SheetTitle,
 } from "@/components/ui/sheet";
+import { Spinner } from "@/components/ui/spinner";
 import { usePuzzles } from "@/hooks/use-puzzles";
-import { useSolves } from "@/hooks/use-solves";
+import {
+  type SolvePenaltyFilter,
+  type SolveSortOption,
+  useSolves,
+} from "@/hooks/use-solves";
 import { formatTimeShort } from "@/lib/format-time";
 import { getEffectiveTime } from "@/lib/stats";
 import { cn } from "@/lib/utils";
@@ -55,85 +66,77 @@ export const Route = createFileRoute("/_timer/solves")({
   component: SolvesPage,
 });
 
-type PenaltyFilter = "all" | Penalty;
-type SortOption = "newest" | "oldest" | "best" | "worst";
+const ROW_HEIGHT = 40;
 
-let hasPageAnimated = false;
+function formatSolveTime(solve: Solve): string {
+  if (solve.penalty === "DNF") return "DNF";
+  const time = getEffectiveTime(solve);
+  const display = formatTimeShort(time);
+  return solve.penalty === "+2" ? `${display}+` : display;
+}
 
-const containerVariants = {
-  hidden: { opacity: 0 },
-  show: {
-    opacity: 1,
-    transition: {
-      staggerChildren: 0.04,
-      delayChildren: 0.05,
-    },
-  },
-};
+function formatDate(timestamp: number): string {
+  const diff = Date.now() - timestamp;
+  const minutes = Math.floor(diff / 60000);
 
-const itemVariants = {
-  hidden: { opacity: 0, y: 8 },
-  show: { opacity: 1, y: 0 },
-};
+  if (minutes < 1) return "Just now";
+  if (minutes < 60) return `${minutes}m ago`;
+
+  const hours = Math.floor(minutes / 60);
+  if (hours < 24) return `${hours}h ago`;
+
+  const days = Math.floor(hours / 24);
+  if (days < 7) return `${days}d ago`;
+
+  return new Intl.DateTimeFormat(undefined, {
+    dateStyle: "medium",
+  }).format(timestamp);
+}
 
 function SolvesPage() {
   const { currentPuzzle } = usePuzzles();
-  const { solves, updatePenalty, deleteSolve } = useSolves({
-    puzzleId: currentPuzzle.id,
-  });
 
-  const [penaltyFilter, setPenaltyFilter] = useState<PenaltyFilter>("all");
-  const [sortOption, setSortOption] = useState<SortOption>("newest");
+  const [penaltyFilter, setPenaltyFilter] = useState<SolvePenaltyFilter>("all");
+  const [sortOption, setSortOption] = useState<SolveSortOption>("newest");
   const [selectedSolve, setSelectedSolve] = useState<Solve | null>(null);
   const [deleteTarget, setDeleteTarget] = useState<Solve | null>(null);
   const [, copyToClipboard] = useCopyToClipboard();
   const [copyFeedback, setCopyFeedback] = useState(false);
+  const copyTimeoutRef = useRef<ReturnType<typeof setTimeout>>(undefined);
 
-  const filteredSolves = useMemo(() => {
-    let result = [...solves];
+  const { solves, isLoading, totalCount, updatePenalty, deleteSolve } =
+    useSolves({
+      puzzleId: currentPuzzle.id,
+      penaltyFilter,
+      sortOption,
+    });
 
-    if (penaltyFilter !== "all") {
-      result = result.filter((solve) => solve.penalty === penaltyFilter);
-    }
+  const isPageLoading = isLoading;
 
-    switch (sortOption) {
-      case "newest":
-        result.sort((a, b) => b.createdAt - a.createdAt);
-        break;
-      case "oldest":
-        result.sort((a, b) => a.createdAt - b.createdAt);
-        break;
-      case "best": {
-        result.sort((a, b) => {
-          const aTime = getEffectiveTime(a);
-          const bTime = getEffectiveTime(b);
-          if (aTime === null && bTime === null) return 0;
-          if (aTime === null) return 1;
-          if (bTime === null) return -1;
-          return aTime - bTime;
-        });
-        break;
-      }
-      case "worst": {
-        result.sort((a, b) => {
-          const aTime = getEffectiveTime(a);
-          const bTime = getEffectiveTime(b);
-          if (aTime === null && bTime === null) return 0;
-          if (aTime === null) return -1;
-          if (bTime === null) return 1;
-          return bTime - aTime;
-        });
-        break;
-      }
-    }
+  const scrollRef = useRef<HTMLDivElement>(null);
 
-    return result;
-  }, [solves, penaltyFilter, sortOption]);
+  const virtualizer = useVirtualizer({
+    count: solves.length > 0 ? solves.length + 1 : 0,
+    getScrollElement: () => scrollRef.current,
+    estimateSize: (index) => (index < solves.length ? ROW_HEIGHT : 60),
+    overscan: 10,
+  });
+
+  const handlePenaltyFilterChange = useCallback((value: string) => {
+    setPenaltyFilter(value as SolvePenaltyFilter);
+  }, []);
+
+  const handleSortChange = useCallback((value: string) => {
+    setSortOption(value as SolveSortOption);
+  }, []);
+
+  useEffect(() => () => clearTimeout(copyTimeoutRef.current), []);
 
   const handleCopyScramble = (scramble: string) => {
     copyToClipboard(scramble);
     setCopyFeedback(true);
-    setTimeout(() => setCopyFeedback(false), 1500);
+    clearTimeout(copyTimeoutRef.current);
+    copyTimeoutRef.current = setTimeout(() => setCopyFeedback(false), 1500);
   };
 
   const handleDelete = () => {
@@ -145,127 +148,163 @@ function SolvesPage() {
     }
   };
 
-  const formatSolveTime = (solve: Solve) => {
-    if (solve.penalty === "DNF") return "DNF";
-    const time = getEffectiveTime(solve);
-    const display = formatTimeShort(time);
-    return solve.penalty === "+2" ? `${display}+` : display;
-  };
-
-  const formatDate = (timestamp: number): string => {
-    const diff = Date.now() - timestamp;
-    const minutes = Math.floor(diff / 60000);
-
-    if (minutes < 1) return "Just now";
-    if (minutes < 60) return `${minutes}m ago`;
-
-    const hours = Math.floor(minutes / 60);
-    if (hours < 24) return `${hours}h ago`;
-
-    const days = Math.floor(hours / 24);
-    if (days < 7) return `${days}d ago`;
-
-    return new Intl.DateTimeFormat(undefined, {
-      dateStyle: "medium",
-    }).format(timestamp);
-  };
+  const items = virtualizer.getVirtualItems();
 
   return (
-    <Page>
-      <PageHeader className="space-y-4">
-        <div>
-          <PageTitle>Solves</PageTitle>
-          <PageDescription>{solves.length} total solves</PageDescription>
-        </div>
-        <div className="flex flex-wrap items-center gap-2">
-          <Select
-            value={penaltyFilter}
-            onValueChange={(value) => setPenaltyFilter(value as PenaltyFilter)}
-          >
-            <SelectTrigger className="w-28">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All</SelectItem>
-              <SelectItem value="OK">OK</SelectItem>
-              <SelectItem value="+2">+2</SelectItem>
-              <SelectItem value="DNF">DNF</SelectItem>
-            </SelectContent>
-          </Select>
+    <div className="flex h-dvh flex-col md:h-svh">
+      <Page className="space-y-6 flex min-h-0 flex-1 flex-col gap-0 py-8!">
+        <PageHeader className="space-y-3 px-0">
+          <div>
+            <PageTitle>Solves</PageTitle>
+            <PageDescription>{totalCount} total solves</PageDescription>
+          </div>
+          <div className="flex flex-wrap items-center gap-2">
+            <Select
+              value={penaltyFilter}
+              onValueChange={handlePenaltyFilterChange}
+            >
+              <SelectTrigger className="w-28">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All</SelectItem>
+                <SelectItem value="OK">OK</SelectItem>
+                <SelectItem value="+2">+2</SelectItem>
+                <SelectItem value="DNF">DNF</SelectItem>
+              </SelectContent>
+            </Select>
 
-          <Select
-            value={sortOption}
-            onValueChange={(value) => setSortOption(value as SortOption)}
-          >
-            <SelectTrigger className="w-28">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="newest">Newest</SelectItem>
-              <SelectItem value="oldest">Oldest</SelectItem>
-              <SelectItem value="best">Best</SelectItem>
-              <SelectItem value="worst">Worst</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-      </PageHeader>
+            <Select value={sortOption} onValueChange={handleSortChange}>
+              <SelectTrigger className="w-28">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="newest">Newest</SelectItem>
+                <SelectItem value="oldest">Oldest</SelectItem>
+                <SelectItem value="best">Best</SelectItem>
+                <SelectItem value="worst">Worst</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+        </PageHeader>
 
-      <PageBody>
-        {filteredSolves.length === 0 ?
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.4 }}
-            onAnimationComplete={() => (hasPageAnimated = true)}
-            className="flex h-40 items-center justify-center text-muted-foreground"
-          >
-            {solves.length === 0 ?
-              "No solves yet. Start timing!"
-            : "No solves match this filter."}
-          </motion.div>
-        : <motion.div
-            key={`${penaltyFilter}-${sortOption}`}
-            variants={containerVariants}
-            initial={hasPageAnimated ? "show" : "hidden"}
-            animate="show"
-            className="flex flex-col gap-1"
-            onAnimationComplete={() => (hasPageAnimated = true)}
-          >
-            {filteredSolves.map((solve) => {
-              return (
-                <motion.div key={solve.id} variants={itemVariants}>
-                  <Button
-                    variant="ghost"
-                    onClick={() => setSelectedSolve(solve)}
-                    className="group hover:bg-muted w-full flex items-center gap-3 text-left"
-                  >
-                    <span
-                      className={cn(
-                        "min-w-[7ch] shrink-0 font-mono text-[15px] font-semibold",
-                        {
-                          "text-foreground": solve.penalty === "OK",
-                          "text-warning": solve.penalty === "+2",
-                          "text-danger": solve.penalty === "DNF",
-                        },
-                      )}
+        <div
+          ref={scrollRef}
+          className={cn(
+            "relative min-h-0 h-full! p-2 flex-1 overflow-y-auto scrollbar-4 rounded-sm transition-opacity duration-150 bg-inset",
+            isPageLoading && "opacity-50",
+          )}
+        >
+          {solves.length === 0 ?
+            <div className="flex h-full flex-col items-center justify-center p-8 text-center animate-in fade-in duration-500">
+              {isPageLoading ?
+                <div className="flex flex-col items-center gap-3">
+                  <Spinner className="size-8 text-accent" />
+                  <p className="text-sm text-muted-foreground animate-pulse">
+                    Loading solves...
+                  </p>
+                </div>
+              : <div className="flex flex-col items-center gap-4">
+                  <div className="rounded-full bg-muted/30 p-4">
+                    <HugeiconsIcon
+                      icon={UnavailableIcon}
+                      className="size-8 text-muted-foreground/40"
+                    />
+                  </div>
+                  <div className="space-y-1">
+                    <p className="text-base font-medium text-foreground">
+                      {totalCount === 0 ? "No solves yet" : "No matches found"}
+                    </p>
+                    <p className="text-sm text-muted-foreground max-w-[200px]">
+                      {totalCount === 0 ?
+                        "Complete your first solve to see it here!"
+                      : "Try adjusting your filters to find what you're looking for."
+                      }
+                    </p>
+                  </div>
+                </div>
+              }
+            </div>
+          : <div
+              style={{ height: virtualizer.getTotalSize() }}
+              className="relative w-full"
+            >
+              {items.map((vItem) => {
+                const isLast = vItem.index === solves.length;
+
+                if (isLast) {
+                  return (
+                    <div
+                      key={vItem.key}
+                      data-index={vItem.index}
+                      ref={virtualizer.measureElement}
+                      className="absolute left-0 top-0 w-full flex items-center justify-center pt-8 pb-16"
+                      style={{
+                        transform: `translateY(${vItem.start}px)`,
+                      }}
                     >
-                      {formatSolveTime(solve)}
-                    </span>
+                      <span className="text-xs text-center font-medium text-muted-foreground/40 uppercase tracking-widest">
+                        You reached the end
+                      </span>
+                    </div>
+                  );
+                }
 
-                    <span className="min-w-0 flex-1 truncate font-mono text-xs text-muted-foreground">
-                      {solve.scramble}
-                    </span>
+                const solve = solves[vItem.index];
+                return (
+                  <div
+                    key={vItem.key}
+                    data-index={vItem.index}
+                    ref={virtualizer.measureElement}
+                    style={{
+                      position: "absolute",
+                      top: 0,
+                      left: 0,
+                      right: 0,
+                      transform: `translateY(${vItem.start}px)`,
+                    }}
+                  >
+                    <Button
+                      variant="ghost"
+                      onClick={() => setSelectedSolve(solve)}
+                      className="group h-[40px] hover:bg-background/60 w-full flex items-center gap-4 px-4 text-left transition-colors"
+                    >
+                      <span
+                        className={cn(
+                          "min-w-[5ch] text-right shrink-0 font-mono text-[14px] font-bold tabular-nums",
+                          {
+                            "text-foreground": solve.penalty === "OK",
+                            "text-warning": solve.penalty === "+2",
+                            "text-danger": solve.penalty === "DNF",
+                          },
+                        )}
+                      >
+                        {formatSolveTime(solve)}
+                      </span>
 
-                    <span className="shrink-0 text-xs text-muted-foreground/50 font-mono">
-                      {formatDate(solve.createdAt)}
-                    </span>
-                  </Button>
-                </motion.div>
-              );
-            })}
-          </motion.div>
-        }
-      </PageBody>
+                      <span className="min-w-0 flex-1 truncate font-mono text-[11px] text-muted-foreground/60 group-hover:text-muted-foreground transition-colors">
+                        {solve.scramble}
+                      </span>
+
+                      <span className="shrink-0 text-[10px] text-muted-foreground/30 font-medium group-hover:text-muted-foreground/50 transition-colors">
+                        {formatDate(solve.createdAt)}
+                      </span>
+                    </Button>
+                  </div>
+                );
+              })}
+            </div>
+          }
+
+          {isPageLoading && solves.length > 0 && (
+            <div className="absolute inset-0 z-10 flex items-center justify-center bg-background/5 transition-all animate-in fade-in duration-200">
+              <div className="rounded-full bg-background/80 p-3 shadow-premium-sm backdrop-blur-md border border-white/10">
+                <Spinner className="size-6 text-accent" />
+              </div>
+            </div>
+          )}
+        </div>
+      </Page>
 
       <Sheet
         open={!!selectedSolve}
@@ -431,7 +470,7 @@ function SolvesPage() {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
-    </Page>
+    </div>
   );
 }
 
