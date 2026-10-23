@@ -1,5 +1,14 @@
 {
   "projects": {
     "default": "cubit-67"
-  }
+  },
+  "targets": {
+    "cubit-67": {
+      "hosting": {
+        "primary": ["cubit-67"],
+        "secondary": ["cubing", "cubyte"]
+      }
+    }
+  },
+  "etags": {}
 }
