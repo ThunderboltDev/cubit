@@ -24,3 +24,7 @@ Thumbs.db
 
 # Unconfig cache
 __unconfig*
+
+# Firebase
+.firebase/
+firebase-debug.log*
