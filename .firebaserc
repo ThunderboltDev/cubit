@@ -6,7 +6,8 @@
     "cubit-67": {
       "hosting": {
         "primary": ["cubit-67"],
-        "secondary": ["cubing", "cubyte"]
+        "secondary": ["cubing"],
+        "tertiary": ["cubyte"]
       }
     }
   },
